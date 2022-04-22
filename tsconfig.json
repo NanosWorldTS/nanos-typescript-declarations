@@ -9,7 +9,7 @@
         "strictNullChecks": true,
         "baseUrl": "./",
         "typeRoots": ["./"],
-        "types": [],
+        "types": ["typescript-to-lua/language-extensions"],
         "noEmit": true,
         "forceConsistentCasingInFileNames": true
     },
