@@ -33,16 +33,944 @@ declare abstract class Actor {
      * @remarks Destroying Actors from inside a {@link GetPairs} loop will cause the iterable to change size during the process. If you want to loop-and-destroy, please use {@link GetAll}.
      */
     public static GetPairs<T extends Actor>(): LuaPairsIterable<number, T>;
+
+    /**
+     * Applies a force in world world to this Actor (the force is applied client side, by, in most cases, the player closest to this Actor)
+     *
+     * @param force {@link Vector} Force to apply
+     * @param velocity_change {@link boolean} Whether to ignore mass. Defaults to false
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the side which <b><u>spawned</u></b> the actor.
+     */
+    public AddImpulse(force: Vector, velocity_change?: boolean): void;
+
+    /**
+     * Attaches this Actor to any other Actor, optionally at a specific bone
+     * - {@link AttachmentRule.KeepRelative} will keep the current relative position/rotation if already attached.
+     * - {@link AttachmentRule.KeepWorld} will calculate the new relative position/rotation so the Actor stays at the same position after being attached.
+     * - {@link AttachmentRule.SnapToTarget} will set the Actor to the same position/rotation as other_actor (or at the bone location) and reset its relative position/rotation to zero.
+     *
+     * Setting lifespan_when_detached to 0 will automatically destroy this actor when detached, setting it to 10 will destroy this after 10 seconds when detached.
+     *
+     * @param other {@link Actor} Other actor to attach
+     * @param attachment_rule {@link AttachmentRule} How to attach. Defaults to {@link AttachmentRule.SnapToTarget}
+     * @param bone_name {@link string} Which bone to attach to. Defaults to ""
+     * @param lifespan_when_detached {@link number} Seconds before destroying this Actor when detached. Defaults to -1
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the side which <b><u>spawned</u></b> the actor.
+     */
+    public AttachTo(other: Actor, attachment_rule?: AttachmentRule, bone_name?: string, lifespan_when_detached?: number): void;
+
+    /**
+     * Destroys this Actor
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the side which <b><u>spawned</u></b> the actor.
+     */
+    public Destroy(): void;
+
+    /**
+     * Detaches this Actor from AttachedTo Actor
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the side which <b><u>spawned</u></b> the actor.
+     */
+    public Detach(): void;
+
+    /**
+     * Sets this Actor's collision type
+     *
+     * @param collision_type Collision Type
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the side which <b><u>spawned</u></b> the actor.
+     */
+    public SetCollision(collision_type: CollisionType): void;
+
+    /**
+     * Adds a permanent force to this Actor, set to Vector(0, 0, 0) to cancel
+     *
+     * @param force {@link Vector} Force to apply
+     * @param is_local {@link boolean} Whether to apply the force at local space. Defaults to true
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the side which <b><u>spawned</u></b> the actor.
+     */
+    public SetForce(force: Vector, is_local?: boolean): void;
+
+    /**
+     * Sets whether gravity is enabled on this Actor
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the side which <b><u>spawned</u></b> the actor.
+     */
+    public SetGravityEnabled(is_enabled: boolean): void;
+
+    /**
+     * Sets whether the actor is visible or not
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public SetVisibility(is_visible: boolean): void;
+
+    /**
+     * Sets whether the highlight is enabled on this Actor, and which highlight index to use
+     *
+     * @param is_enabled {@link boolean} Whether the highlight should be enabled
+     * @param index {@link number} Index to use (should be 0, 1 or 2). Defaults to 0
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the side which <b><u>spawned</u></b> the actor.
+     */
+    public SetHighlightEnabled(is_enabled: boolean, index?: 0 | 1 | 2 | number): void;
+
+    /**
+     * Sets the time (in seconds) before this Actor is destroyed. After this time has passed, the actor will be automatically destroyed.
+     *
+     * @param seconds {@link number} Seconds before being destroyed
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the side which <b><u>spawned</u></b> the actor.
+     */
+    public SetLifeSpan(seconds: number): void;
+
+    /**
+     * Sets this Actor's location in the game world
+     *
+     * @param vector {@link Vector} New location
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the side which <b><u>spawned</u></b> the actor.
+     */
+    public SetLocation(vector: Vector): void;
+
+    /**
+     * Sets the Player to have network authority over this Actor. This Player will be manually assigned to handle this Actor's physics and share its location with other clients. The authority assignment will still be overridden by the game automatically
+     *
+     * @param player {@link Player} New player which will assume the Network Authority of this Actor. Defaults to null
+     *
+     * @see <a href="https://docs.nanos.world/docs/core-concepts/scripting/authority-concepts#network-authority">here</a> for more information
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetNetworkAuthority(player?: Player): void;
+
+    /**
+     * Sets this Actor's rotation in the game world
+     *
+     * @param rotation {@link Rotator} New rotation
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the side which <b><u>spawned</u></b> the actor.
+     */
+    public SetRotation(rotation: Rotator): void;
+
+    /**
+     * Sets this Actor's relative location in local space (only if this actor is attached)
+     *
+     * @param relative_location {@link Vector} New relative location
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the side which <b><u>spawned</u></b> the actor.
+     */
+    public SetRelativeLocation(relative_location: Vector): void;
+
+    /**
+     * Sets this Actor's relative rotation in local space (only if this actor is attached)
+     *
+     * @param relative_rotation {@link Rotator} New relative rotation
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the side which <b><u>spawned</u></b> the actor.
+     */
+    public SetRelativeRotation(relative_rotation: Rotator): void;
+
+    /**
+     * Sets this Actor's scale
+     *
+     * @param scale {@link Vector} New scale
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the side which <b><u>spawned</u></b> the actor.
+     */
+    public SetScale(scale: Vector): void;
+
+    /**
+     * Sets a value in this Actor, which can be accessed by any package (optionally sync on clients if called from server)
+     *
+     * @param key {@link string} Key
+     * @param value {@link any} Value
+     * @param sync_on_clients {@link boolean} Server side parameter, if enabled will sync this value with all clients. Defaults to false
+     *
+     * @see <a href="https://docs.nanos.world/docs/core-concepts/scripting/entity-values">here</a> for more information
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public SetValue(key: string, value: any, sync_on_clients?: boolean): void;
+
+    /**
+     * Smoothly moves this actor to a location during a certain time
+     *
+     * @param location {@link Vector} Location to translate to
+     * @param time {@link number} Time to interp from current location to target location
+     * @param exp {@link number} Exponential used to smooth interp, use 0 for linear movement. Defaults to 0
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the side which <b><u>spawned</u></b> the actor.
+     */
+    public TranslateTo(location: Vector, time: number, exp?: number): void;
+
+    /**
+     * Smoothly rotates this Actor to an angle during a certain time
+     *
+     * @param rotation {@link Rotator} Angle to rotate to
+     * @param time {@link number} Time to interp from current rotation to target rotation
+     * @param exp {@link number} Exponential used to smooth interp, use 0 for linear movement. Defaults to 0
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the side which <b><u>spawned</u></b> the actor.
+     */
+    public RotateTo(rotation: Rotator, time: number, exp?: number): void;
+
+    /**
+     * Gets if this Actor is being destroyed (you can check this inside events like Drop to see if a Pickable is being dropped because it's going to be destroyed)
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public IsBeingDestroyed(): boolean;
+
+    /**
+     * Gets whether this actor is visible
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public IsVisible(): boolean;
+
+    /**
+     * Gets whether gravity is enabled on this Actor
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public IsVisible(): boolean;
+
+    /**
+     * Gets if this Actor is in water
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public IsInWater(): boolean;
+
+    /**
+     * Gets if this Actor is currently network distributed. Only actors being network distributed can have their network authority set Entities have NetworkDistributed automatically disabled when: Attached, Possessed, Grabbed, Picked Up or Driving
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public IsNetworkDistributed(): boolean;
+
+    /**
+     * Gets if this Actor is valid (i.e. wasn't destroyed and points to a valid Actor)
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public IsValid(): boolean;
+
+    /**
+     * Gets all Actors attached to this Actor
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetAttachedEntities(): Actor[];
+
+    /**
+     * Gets the Actor this Actor is attached to
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetAttachedTo(): Actor;
+
+    /**
+     * Gets this Actor's bounds
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Client</u></b>.
+     */
+    public GetBounds(): {Origin: Vector, BoxExtent: Vector, SphereRadius: number};
+
+    /**
+     * Gets this Actor's collision type
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetCollision(): number;
+
+    /**
+     * Gets the universal network ID of this Actor (same on both client and server)
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetID(): number;
+
+    /**
+     * Gets this Actor's location in the game world
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetLocation(): Vector;
+
+    /**
+     * Gets this Actor's angle in the game world
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetRotation(): Rotator;
+
+    /**
+     * Gets this Actor's force (set by {@link SetForce})
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetForce(): Vector;
+
+    /**
+     * Gets if the LocalPlayer is currently the Network Authority of this Actor
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Client</u></b>.
+     */
+    public HasNetworkAuthority(): boolean;
+
+    /**
+     * Gets if this Actor was spawned by the client side. Returns false if it was spawned by the Server or true if it was spawned by the client
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Client</u></b>.
+     */
+    public HasAuthority(): boolean;
+
+    /**
+     * Gets this Actor's scale
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetScale(): Vector;
+
+    /**
+     * Gets the type of this Actor
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetType(): string;
+
+    /**
+     * Gets a value stored on this Actor at the given key
+     *
+     * @see <a href="https://docs.nanos.world/docs/core-concepts/scripting/entity-values">here</a> for more information
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetValue(key: string, fallback: any): any;
+
+    /**
+     * Returns this Actor's current velocity
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Client</u></b>.
+     */
+    public GetVelocity(): Vector;
+
+    /**
+     * Adds an Unreal Actor Tag to this Actor
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Client</u></b>.
+     */
+    public AddActorTag(tag: string): void;
+
+    /**
+     * Remove an Unreal Actor Tag from this Actor
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Client</u></b>.
+     */
+    public RemoveActorTag(tag: string): void;
+
+    /**
+     * Gets all Unreal Actor Tags from this Actor
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Client</u></b>.
+     */
+    public GetActorTags(): string[];
+
+    /**
+     * Subscribes for an {@link ActorEvent}
+     *
+     * @return The given function callback itself
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public Subscribe(event_name: ActorEvent, callback: EventCallback): EventCallback;
+
+    /**
+     * Unsubscribes all callbacks from this Event in this Actor within this Package, optionally passing the function to unsubscribe only that callback
+     *
+     * @param callback Defaults to null
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public Unsubscribe(event_name: ActorEvent, callback?: EventCallback): void;
 }
+
+type ActorEvent = string | ActorEvent_Destroy | ActorEvent_Spawn | ActorEvent_ValueChange;
+//region Actor Events
+/**
+ * Triggered when an Actor is destroyed
+ *
+ * @param self {@link Actor} The Actor which has been destroyed
+ */
+type ActorEvent_Destroy = "Destroy";
+/**
+ * Triggered when an Actor is spawned/created
+ *
+ * @param self {@link Actor} The Actor which has been spawned
+ */
+type ActorEvent_Spawn = "Spawn";
+/**
+ * Triggered when an Actor has a value changed with <code>SetValue()</code>
+ *
+ * @param self {@link Actor} The Actor that just had a value changed
+ * @param key {string} The key of the value that has changed
+ * @param value {any} The new value
+ */
+type ActorEvent_ValueChange = "ValueChange";
+//endregion
+
+/**
+ * A Paintable class is a base class in nanos world which provides customization for materials, exposing common functions to allow you to set custom material parameters, including loading textures from disk.
+ *
+ * @remarks This is a base class. You cannot spawn it directly.
+ */
+declare abstract class Paintable extends Actor {
+
+    /**
+     * Sets the material at the specified index of this Actor
+     *
+     * @param material_path {@link any} The new Material to apply.
+     * @param index {@link number} The index to apply - -1 means all indices. Defaults to -1
+     *
+     * @see <a href="https://docs.nanos.world/docs/core-concepts/assets#referencing-assets-in-scripting">here</a> for more information
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public SetMaterial(material_path: any, index?: number): void;
+
+    /**
+     * Sets the material at the specified index of this Actor to a {@link Canvas} object
+     *
+     * @param canvas {@link Canvas} The Canvas object to use as a material
+     * @param index {@link number} The index to apply - -1 means all indices. Defaults to -1
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Client</u></b>.
+     */
+    public SetMaterialFromCanvas(canvas: Canvas, index?: number): void;
+
+    /**
+     * Sets the material at the specified index of this Actor to a {@link SceneCapture} object
+     *
+     * @param scene_capture {@link SceneCapture} The SceneCapture object to use as a material
+     * @param index {@link number} The index to apply - -1 means all indices. Defaults to -1
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Client</u></b>.
+     */
+    public SetMaterialFromSceneCapture(scene_capture: SceneCapture, index?: number): void;
+
+    /**
+     * Sets the material at the specified index of this Actor to a {@link WebUI} object
+     *
+     * @param webui {@link WebUI} The WebUI object to use as a material
+     * @param index {@link number} The index to apply - -1 means all indices. Defaults to -1
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Client</u></b>.
+     */
+    public SetMaterialFromWebUI(webui: WebUI, index?: number): void;
+
+    /**
+     * Resets the material from the specified index to the original one
+     *
+     * @param index {@link number} The index to apply - -1 means all indices. Defaults to -1
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public ResetMaterial(index?: number): void;
+
+    /**
+     * Sets a Color parameter in this Actor’s material
+     *
+     * @param parameter_name {@link string} The name of the material parameter
+     * @param color {@link Color} The value to set
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public SetMaterialColorParameter(parameter_name: string, color: Color): void;
+
+    /**
+     * Sets a Scalar parameter in this Actor's material
+     *
+     * For setting a parameter in an <a href="https://docs.nanos.world/docs/scripting-reference/classes/character#addskeletalmeshattached">Attachable</a>
+     * mesh, use the following parameter_name pattern: attachable///[ATTACHABLE_ID]/[PARAMETER_NAME]
+     *
+     * @param parameter_name {@link string} The name of the material parameter
+     * @param value {@link any} The value to set
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public SetMaterialScalarParameter(parameter_name: string, value: any): void;
+
+    /**
+     * Sets a texture parameter in this Actor's material to an image on disk
+     *
+     * @param parameter_name {@link string} The name of the material parameter
+     * @param texture_path {@link string} The path to the texture
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public SetMaterialTextureParameter(parameter_name: string, texture_path: string): void;
+
+    /**
+     * Sets a Vector parameter in this Actor's material
+     *
+     * For setting a parameter in an <a href="https://docs.nanos.world/docs/scripting-reference/classes/character#addskeletalmeshattached">Attachable</a>
+     * mesh, use the following parameter_name pattern: attachable///[ATTACHABLE_ID]/[PARAMETER_NAME]
+     *
+     * @param parameter_name {@link string} The name of the material parameter
+     * @param vector {@link Vector} The value to set
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public SetMaterialVectorParameter(parameter_name: string, vector: Vector): void;
+
+    /**
+     * Overrides this Actor's Physical Material with a new one
+     *
+     * @see <a href="https://docs.nanos.world/docs/core-concepts/assets#referencing-assets-in-scripting">here</a> for more information
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public SetPhysicsMaterial(physical_material_path: any): void;
+}
+
+/**
+ * Pickables are special Actors which can be grabbed, held and used by {@link Character}s. Examples of Pickable Actor
+ * are: {@link Weapon}, {@link Melee} and {@link Grenade}.
+ *
+ * They have special methods and events and are highlighted when looked at by a Character.
+ */
+declare abstract class Pickable extends Paintable {
+
+    /**
+     * Spawns and attaches a SkeletalMesh to this Pickable, the SkeletalMesh must have the same skeleton used by this Actor's mesh, and will follow all animations from it. Uses a custom ID to be used for removing it later
+     *
+     * @param id Unique ID to assign to the SkeletalMesh
+     * @param skeletal_mesh_path SkeletalMesh asset to use
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public AddSkeletalMeshAttached(id: string, skeletal_mesh_path: string): void;
+
+    /**
+     *
+     * @param id Unique ID to assign to the StaticMesh
+     * @param static_mesh_path 	StaticMesh asset to use
+     * @param socket Bone socket to attach to. Defaults to ""
+     * @param relative_location Relative location. Defaults to Vector(0, 0, 0)
+     * @param relative_rotation Relative rotation. Defaults to Rotator(0, 0, 0)
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public AddStaticMeshAttached(id: string, static_mesh_path: string, socket?: string, relative_location?: Vector, relative_rotation?: Rotator): void;
+
+    /**
+     * Pulls the usage of this Pickable (will start firing if this is a weapon)
+     *
+     * @param release_use_after Time in seconds to automatically release the usage (-1 will not release, 0 will release one tick after). Defaults to -1
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public PullUse(release_use_after?: number): void;
+
+    /**
+     * Releases the usage of this Pickable (will stop firing if this is a weapon)
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public ReleaseUse(): void;
+
+    /**
+     * Removes, if it exists, a SkeletalMesh from this Pickable given its custom ID
+     *
+     * @param id Unique ID of the SkeletalMesh to remove
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public RemoveSkeletalMeshAttached(id: string): void;
+
+    /**
+     * Removes, if it exists, a StaticMesh from this Pickable given its custom ID
+     *
+     * @param id Unique ID of the StaticMesh to remove
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public RemoveStaticMeshAttached(id: string): void;
+
+    /**
+     * Sets the Attachment Settings for this Pickable (how it attaches to the Character when Picking up)
+     *
+     * @param relative_location Relative location to the Socket
+     * @param relative_rotation Relative rotation to the Socket. Defaults to Rotator(0, 0, 0)
+     * @param socket Character Socket to attach. Defaults to "hand_r_socket"
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetAttachmentSettings(relative_location: Vector, relative_rotation?: Rotator, socket?: string): void;
+
+    /**
+     * Sets the crosshair material for this Pickable
+     *
+     * @param path Asset path to the crosshair material
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetCrosshairMaterial(path: string): void;
+
+    /**
+     * Sets if this Pickable can be grabbed
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetPickable(is_pickable: boolean): void;
+
+    /**
+     * Gets the name of the asset this Pickable uses
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetAssetName(): string;
+
+    /**
+     * Gets the Character, if it exists, that's holding this Pickable
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetHandler(): Character|undefined;
+
+    /**
+     * Subscribes for an {@link PickableEvent}
+     *
+     * @return The given function callback itself
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public Subscribe(event_name: PickableEvent, callback: EventCallback): EventCallback;
+}
+
+type PickableEvent = ActorEvent | PickableEvent_Drop | PickableEvent_Hit | PickableEvent_Interact
+    | PickableEvent_PickUp | PickableEvent_PullUse | PickableEvent_ReleaseUse;
+//region Piackable Events
+/**
+ * When a Character drops this Pickable
+ *
+ * @param self {@link Pickable} The Pickable which has been dropped
+ * @param character {@link Character} The Character that dropped it
+ * @param was_triggered_by_player {@link boolean} If the Player actively pressed 'G' to drop
+ */
+type PickableEvent_Drop = "Drop";
+/**
+ * When this Pickable hits something
+ *
+ * @param self {@link Pickable}	The Actor that was hit
+ * @param impact_force {@link number} The intensity of the hit normalized by the Pickable's weight
+ * @param normal_impulse {@link Vector} The impulse direction of the hit
+ * @param impact_location {@link Vector}The world space location of the impact
+ * @param velocity {@link Vector} The Pickable's velocity at the moment it hit
+ */
+type PickableEvent_Hit = "Hit";
+/**
+ * When a Character interacts with this Pickable (i.e. tries to pick it up)
+ *
+ * @param self {@link Pickable} The Pickable that was interacted with
+ * @param character {@link Character} The Character that interacted with it
+ *
+ * @return false to prevent the interaction
+ *
+ * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+ */
+type PickableEvent_Interact = "Interact";
+/**
+ * When a Character picks this up
+ *
+ * @param self {@link Pickable} The Pickable that was picked up
+ * @param character {@link Character} The Character that picked it up
+ */
+type PickableEvent_PickUp = "PickUp";
+/**
+ * When a Character presses the use button for this Pickable (i.e. clicks left mouse button with this equipped)
+ *
+ * @param self {@link Pickable} The Pickable which has just been used
+ * @param character {@link Character} The Character that used it
+ */
+type PickableEvent_PullUse = "PullUse";
+/**
+ * When a Character releases the use button for this Pickable (i.e. releases left mouse button with this equipped)
+ *
+ * @param self {@link Pickable} The Pickable which has just stopped being used
+ * @param character {@link Character} The Character that stopped using it
+ */
+type PickableEvent_ReleaseUse = "ReleaseUse";
+//endregion
 //endregion
 
 //region Classes
+/**
+ * A Billboard is a 2D Material that will be rendered always facing the camera.
+ *
+ * @remarks <i>Authority</i>: This can be spawned only on the <b><u>Client</u></b>.
+ */
+declare class Billboard extends Paintable {
 
+    /**
+     * @param location Defaults to Vector(0, 0, 0)
+     * @param material_asset Defaults to ""
+     * @param size Defaults to Vector2D(32, 32)
+     * @param size_in_screen_space Size is in Screen or World Space. Defaults to false
+     *
+     * @see <a href="https://docs.nanos.world/docs/core-concepts/assets#referencing-assets-in-scripting">here</a> for more information about <b>material_asset</b>
+     */
+    public constructor(location?: Vector, material_asset?: any, size?: Vector2D, size_in_screen_space?: boolean);
+}
+
+/**
+ * A Blueprint Class allows spawning any Unreal Blueprint Actor in nanos world.
+ *
+ * <i>Tip:</i> If your Actor Blueprint was spawned on the Server, it will be automatically synchronized with other players using the nanos world Network Authority system! It follows the same rules as all other entities!
+ *
+ * <i>Note:</i> Currently it is only possible to communicate in one-way with the Blueprint (Scripting -> Blueprint). We didn't find a way to have the inverse communication hopefully yet.
+ *
+ * @remarks <i>Authority</i>: This can be spawned on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+ */
+declare class Blueprint extends Paintable {
+
+    /**
+     * @param location Defaults to Vector(0, 0, 0)
+     * @param rotation Defaults to Rotator(0, 0, 0)
+     * @param blueprint_path Defaults to ""
+     *
+     * @see <a href="https://docs.nanos.world/docs/core-concepts/assets#referencing-assets-in-scripting">here</a> for more information about <b>blueprint_path</b>
+     */
+    public constructor(location?: Vector, rotation?: Rotator, blueprint_path?: any);
+
+    /**
+     * Calls a Blueprint Event or Function
+     *
+     * @param event_name Event or Function name
+     * @param args Sequence of parameters to call
+     */
+    public CallBlueprintEvent(event_name: string, ...args: any[]): void;
+}
+
+/**
+ * A Cable represents a Physics Constraint which joins two Actors with a rope-like visual representation between them
+ *
+ * nanos world Cables are composed primarily of two Unreal Engine components: a Cable and a <a href="https://docs.unrealengine.com/5.0/en-US/physics-constraint-component-user-guide-in-unreal-engine/">PhysicsConstraint</a>.
+ * The first is used for visual purposes only and the second one gives the effective physical effects that are applied to each end of the <a href="https://docs.unrealengine.com/5.0/en-US/API/Plugins/CableComponent/UCableComponent/">Cable</a>.
+ *
+ * <i>Info:</i> Cable visuals can be tweaked with {@link SetForces}, {@link SetCableSettings} and {@link SetRenderingSettings} methods. Those methods don’t have effect on the physics being applied and only have effects on the visual representation.
+ * Cable physics can be tweaked with {@link SetAngularLimits} and {@link SetLinearLimits}.
+ *
+ * After attaching the two sides of your cable, the physics can be tweaked to affect how the constraint will affect the objects.
+ *
+ * <i>Tip:</i> Cables are automatically destroyed when one of the sides are detached
+ *
+ * <i>Tip:</i> You can find more useful information regarding physical properties of the joint in the end of this page.
+ *
+ * @remarks <i>Authority</i>: This can be spawned only on the <b><u>Server</u></b>.
+ */
+declare class Cable extends Paintable {
+
+    /**
+     * @param location Defaults to Vector(0, 0, 0)
+     * @param enable_visuals Toggles the cable visuals. Defaults to true
+     */
+    public constructor(location?: Vector, enable_visuals?: boolean);
+
+    /**
+     * Attached the beginning of this cable to another Actor at a specific bone or relative location
+     *
+     * @param relative_location Defaults to Vector(0, 0, 0)
+     * @param bone_name Defaults to ""
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public AttachStartTo(other: Actor, relative_location?: Vector, bone_name?: string): void;
+
+    /**
+     * Attached the end of this cable to another Actor at a specific bone or relative location
+     *
+     * @param relative_location Defaults to Vector(0, 0, 0)
+     * @param bone_name Defaults to ""
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public AttachEndTo(other: Actor, relative_location?: Vector, bone_name?: string): void;
+
+    /**
+     * Detaches the End of this Cable
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public DetachEnd(): void;
+
+    /**
+     * Detaches the Start of this Cable
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public DetachStart(): void;
+
+    /**
+     * Set the overall settings for this cable (visuals only)
+     *
+     * @param length Rest length of the cable
+     * @param num_segments How many segments the cable has
+     * @param solver_iterations The number of solver iterations controls how 'stiff' the cable is
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public SetCableSettings(length: number, num_segments: number, solver_iterations: number): void;
+
+    /**
+     * Set the forces the cable has applied (visuals only)
+     *
+     * @param force Force vector (world space) applied to all particles in cable
+     * @param gravity_scale Scaling applied to world gravity affecting this cable. Defaults to 1
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public SetForces(force: Vector, gravity_scale?: number): void;
+
+    /**
+     * Sets the Physics Angular Limits of this cable
+     *
+     * @param swing_1_motion Indicates whether the Swing1 limit is used
+     * @param swing_2_motion Indicates whether the Swing2 limit is used
+     * @param twist_motion Indicates whether the Twist limit is used
+     * @param swing_1_limit Angle of movement along the XY plane. This defines the first symmetric angle of the cone
+     * @param swing_2_limit Angle of movement along the XZ plane. This defines the second symmetric angle of the cone
+     * @param twist_limit Symmetric angle of roll along the X-axis
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetAngularLimits(swing_1_motion: ConstraintMotion, swing_2_motion: ConstraintMotion, twist_motion: ConstraintMotion, swing_1_limit: number, swing_2_limit: number, twist_limit: number): void;
+
+    /**
+     * Sets the Physics Linear Limits of this cable. If use_soft_constraint is enabled, then stiffness and damping will be used, otherwise restitution will be used.
+     *
+     * @param x_motion Indicates the linear constraint applied along the X-axis. Free implies no constraint at all. Locked implies no movement along X is allowed. Limited implies the distance in the joint along all active axes must be less than the Distance provided
+     * @param y_motion Indicates the linear constraint applied along the Y-axis. Free implies no constraint at all. Locked implies no movement along Y is allowed. Limited implies the distance in the joint along all active axes must be less than the Distance provided
+     * @param z_motion Indicates the linear constraint applied along theZX-axis. Free implies no constraint at all. Locked implies no movement along Z is allowed. Limited implies the distance in the joint along all active axes must be less than the Distance provided
+     * @param limit The distance allowed between between the two joint reference frames. Distance applies on all axes enabled (one axis means line, two axes implies circle, three axes implies sphere)
+     * @param restitution Controls the amount of bounce when the constraint is violated. A restitution value of 1 will bounce back with the same velocity the limit was hit. A value of 0 will stop dead. Defaults to 0
+     * @param use_soft_constraint Whether we want to use a soft constraint (spring). Defaults to false
+     * @param stiffness Stiffness of the soft constraint. Only used when Soft Constraint is on. Defaults to 0
+     * @param damping Damping of the soft constraint. Only used when Soft Constraint is on. Defaults to 0
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetLinearLimits(x_motion: ConstraintMotion, y_motion: ConstraintMotion, z_motion: ConstraintMotion, limit: number, restitution?: number, use_soft_constraint?: boolean, stiffness?: number, damping?: number): void;
+
+    /**
+     * Set the rendering settings of this cable (visuals only)
+     *
+     * @param width How wide the cable geometry is
+     * @param num_sides Number of sides of the cable geometry
+     * @param tile_material How many times to repeat the material along the length of the cable
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public SetRenderingSettings(width: number, num_sides: number, tile_material: number): void;
+
+    /**
+     * Gets the actor attached to Start
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetAttachedStartTo(): Actor;
+
+    /**
+     * Gets the actor attached to End
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetAttachedEndTo(): Actor;
+}
+
+declare class Canvas {
+
+}
+
+declare class Character extends Paintable {
+
+}
+
+declare class Database {
+
+}
+
+declare class Decal extends Paintable {
+
+}
+
+declare class File {
+
+}
+
+declare class Grenade extends Pickable {
+
+}
+
+declare class Light extends Actor {
+
+}
+
+declare class Melee extends Pickable {
+
+}
+
+declare class Particle extends Actor {
+
+}
+
+declare class Player {
+
+}
+
+declare class Prop extends Paintable {
+
+}
+
+declare class SceneCapture extends Actor {
+
+}
+
+declare class Sound extends Actor {
+
+}
+
+declare class StaticMesh extends Paintable {
+
+}
+
+declare class TextRender extends Paintable {
+
+}
+
+declare class Trigger extends Actor {
+
+}
+
+declare class Vehicle extends Paintable {
+
+}
+
+declare class Weapon extends Pickable {
+
+}
+
+declare class WebUI {
+
+}
 //endregion
 
 //region Static Classes
-import {Event} from "typedoc";
-
 /**
  * Retrieve Assets from Asset Packs
  *
@@ -1784,7 +2712,7 @@ declare enum CollisionChannel {
     Foliage = 1 << 20
 }
 
-declare enum ColisionType {
+declare enum CollisionType {
     /**
      * Blocks All
      */
