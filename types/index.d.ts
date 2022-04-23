@@ -434,14 +434,14 @@ declare abstract class Paintable extends Actor {
     /**
      * Sets the material at the specified index of this Actor
      *
-     * @param material_path {@link any} The new Material to apply.
+     * @param material_path {@link string} The new Material to apply.
      * @param index {@link number} The index to apply - -1 means all indices. Defaults to -1
      *
      * @see <a href="https://docs.nanos.world/docs/core-concepts/assets#referencing-assets-in-scripting">here</a> for more information
      *
      * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
      */
-    public SetMaterial(material_path: any, index?: number): void;
+    public SetMaterial(material_path: string, index?: number): void;
 
     /**
      * Sets the material at the specified index of this Actor to a {@link Canvas} object
@@ -535,7 +535,7 @@ declare abstract class Paintable extends Actor {
      *
      * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
      */
-    public SetPhysicsMaterial(physical_material_path: any): void;
+    public SetPhysicsMaterial(physical_material_path: string): void;
 }
 
 /**
@@ -725,7 +725,7 @@ declare class Billboard extends Paintable {
      *
      * @see <a href="https://docs.nanos.world/docs/core-concepts/assets#referencing-assets-in-scripting">here</a> for more information about <b>material_asset</b>
      */
-    public constructor(location?: Vector, material_asset?: any, size?: Vector2D, size_in_screen_space?: boolean);
+    public constructor(location?: Vector, material_asset?: string, size?: Vector2D, size_in_screen_space?: boolean);
 }
 
 /**
@@ -735,7 +735,7 @@ declare class Billboard extends Paintable {
  *
  * <i>Note:</i> Currently it is only possible to communicate in one-way with the Blueprint (Scripting -> Blueprint). We didn't find a way to have the inverse communication hopefully yet.
  *
- * @remarks <i>Authority</i>: This can be spawned on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+ * @remarks <i>Authority</i>: This can be spawned on both <b><u>Client</u></b> and <b><u>Server</u></b>. (if you spawn it on client, it won't be synchronized with other players).
  */
 declare class Blueprint extends Paintable {
 
@@ -746,7 +746,7 @@ declare class Blueprint extends Paintable {
      *
      * @see <a href="https://docs.nanos.world/docs/core-concepts/assets#referencing-assets-in-scripting">here</a> for more information about <b>blueprint_path</b>
      */
-    public constructor(location?: Vector, rotation?: Rotator, blueprint_path?: any);
+    public constructor(location?: Vector, rotation?: Rotator, blueprint_path?: string);
 
     /**
      * Calls a Blueprint Event or Function
@@ -934,7 +934,7 @@ declare class Canvas {
      *
      * @remarks This method can only be called from inside {@link CanvasEvent_Update} event
      */
-    public DrawMaterial(material_path: any, screen_position: Vector2D, screen_size: Vector2D, coordinate_position: Vector2D, coordinate_size?: Vector2D, rotation?: number, pivot_point?: Vector2D): void;
+    public DrawMaterial(material_path: string, screen_position: Vector2D, screen_size: Vector2D, coordinate_position: Vector2D, coordinate_size?: Vector2D, rotation?: number, pivot_point?: Vector2D): void;
 
     /**
      * Draws a Text on the Canvas
@@ -1123,63 +1123,968 @@ declare class Decal extends Paintable {
     public constructor(location?: Vector, rotation?: Rotator, material_asset?: string, size?: Vector, lifespan?: number, fade_screen_size?: number);
 }
 
+/**
+ * A File represents an entry to a system file.
+ *
+ * <i>Info:</i> It is not possible to open files from outside the server folder. All path must be relative to the Server’s executable folder. All files are opened as binary file by default.
+ *
+ * @remarks <i>Authority</i>: This can be spawned only on the <b><u>Server</u></b>.
+ */
 declare class File {
 
+    /**
+     * @param file_path Path relative to server executable
+     * @param truncate Whether or not to clear the file upon opening it. Defaults to false
+     */
+    public constructor(file_path: string, truncate?: boolean);
+
+    /**
+     * Returns when the file was last modified in Unix time
+     */
+    public static Time(path: string): number;
+
+    /**
+     * Creates a directory (for every folder passed).
+     *
+     * @return true if succeeded, false otherwise
+     */
+    public static CreateDirectory(path: string): boolean;
+
+    /**
+     * Deletes a folder or a file
+     */
+    public static Remove(path: string): number;
+
+    /**
+     * Gets if a file or folder exists
+     */
+    public static Exists(path: string): boolean;
+
+    /**
+     * Gets if a path is a directory
+     */
+    public static IsDirectory(path: string): boolean;
+
+    /**
+     * Gets if a path is a file
+     */
+    public static IsRegularFile(path: string): boolean;
+
+    /**
+     * Closes the file
+     */
+    public Close(): void;
+
+    /**
+     * Flushes content to the file
+     */
+    public Flush(): void;
+
+    /**
+     * Checks if the file status is End of File
+     */
+    public IsEOF(): boolean;
+
+    /**
+     * Checks if the file status is Bad
+     */
+    public IsBad(): boolean;
+
+    /**
+     * Checks if the file status is Good
+     */
+    public IsGood(): boolean;
+
+    /**
+     * Checks if the last operation has Failed
+     */
+    public HasFailed(): boolean;
+
+    /**
+     * Reads n (Length) characters from the File and returns it. Also moves the file pointer to the latest read position. Pass 0 to read the whole file
+     *
+     * @param length Length to be read from file. Defaults to 0
+     */
+    public Read(length?: number): string;
+
+    /**
+     * Reads n (Length) characters from the File asynchronously. Also moves the file pointer to the latest read position. Pass 0 to read the whole file
+     *
+     * @param length Length to be read from file
+     * @param callback Callback with the file read
+     */
+    public ReadAsync(length: number, callback: (content: string) => void): void;
+
+    /**
+     * Reads and returns the next file line
+     */
+    public ReadLine(): string;
+
+    /**
+     * Sets the file pointer to a specific position
+     *
+     * @param position Position to offset the file pointer
+     */
+    public Seek(position: number): void;
+
+    /**
+     * Returns the size of the file
+     */
+    public Size(): number;
+
+    /**
+     * Skips n (amount) positions from the current file pointer position
+     *
+     * @param amount Amount to offset the file pointer
+     */
+    public Skip(amount: number): void;
+
+    /**
+     * Returns the current file pointer position
+     */
+    public Tell(): number;
+
+    /**
+     * Writes the Data at the current position of the file
+     *
+     * @param data Writes the data to the file
+     */
+    public Write(data: string): void;
 }
 
+/**
+ * Chad Grenade
+ *
+ * <i>Tip:</i> nanos world provides a special Particle* called nanos-world::P_Grenade_Special which spawns different particles depending on the surface it explodes, and also if is underwater.
+ *
+ * *This "Particle" is just a special identifier which can only be used on Grenades!
+ *
+ * @remarks <i>Authority</i>: This can be spawned only on the <b><u>Server</u></b>.
+ */
 declare class Grenade extends Pickable {
 
+    /**
+     * @param location Defaults to Vector(0, 0, 0)
+     * @param rotation Defaults to Rotator(0, 0, 0)
+     * @param static_mesh_asset Defaults to "nanos-world::SM_Grenade_G67"
+     * @param explosion_particles Defaults to "nanos-world::P_Grenade_Special"
+     * @param explosion_sound Defaults to "nanos-world::A_Explosion_Large"
+     * @param collision_type Defaults to {@link CollisionType.Normal}
+     * @param gravity_enabled Defaults to true
+     *
+     * @see <a href="https://docs.nanos.world/docs/core-concepts/assets#referencing-assets-in-scripting">here</a> for more information on how to reference assets
+     */
+    public constructor(location?: Vector, rotation?: Rotator, static_mesh_asset?: string, explosion_particles?: string, explosion_sound?: string, collision_type?: CollisionType, gravity_enabled?: boolean);
+
+    /**
+     * Forces this grenade to Explode
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public Explode(): void;
+
+    /**
+     * Sets Damage parameters of this Grenade
+     *
+     * @param base_damage Max damage when inner radius. Defaults to 90
+     * @param minimum_damage Min damage when outer radius. Defaults to 0
+     * @param damage_inner_radius Radius which damage will be 100%. Defaults to 200
+     * @param damage_outer_radius Radius which damage will be interpoled through falloff. Defaults to 1000
+     * @param damage_falloff Lerp function between Max and Min damage. Defaults to 1
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetDamage(base_damage?: number, minimum_damage?: number, damage_inner_radius?: number, damage_outer_radius?: number, damage_falloff?: number): void;
+
+    /**
+     * Set Time until Explosion after thrown
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetTimeToExplode(time: number): void;
+
+    /**
+     * Set Impulse applied when throwing
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetThrowForce(force: any): void;
+
+    /**
+     * Damage at Inner Radius
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetBaseDamage(): number;
+
+    /**
+     * Radius which BaseDamage will apply proportionally
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetDamageFalloff(): number;
+
+    /**
+     * Radius which MinimumDamage will apply
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetDamageInnerRadius(): number;
+
+    /**
+     * Radius which BaseDamage will apply
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetDamageOuterRadius(): number;
+
+    /**
+     * Damage at Outer Radius
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetMinimumDamage(): number;
+
+    /**
+     * Time until Explosion
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetTimeToExplode(): number;
+
+    /**
+     * Impulse applied when throwing
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetThrowForce(): any;
+
+    /**
+     * Subscribes for an {@link GrenadeEvent}
+     *
+     * @return The given function callback itself
+     */
+    public Subscribe(event_name: GrenadeEvent, callback: EventCallback): EventCallback;
+
+    /**
+     * Unsubscribes all callbacks from this Event in this Actor within this Package, optionally passing the function to unsubscribe only that callback
+     *
+     * @param callback Defaults to null
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public Unsubscribe(event_name: GrenadeEvent, callback?: EventCallback): void;
 }
 
+type GrenadeEvent = ActorEvent | GrenadeEvent_Explode | GrenadeEvent_Throw;
+//region Grenade Events
+/**
+ * Triggered when the has exploded
+ *
+ * @param self {@link Grenade} The grenade which exploded
+ */
+type GrenadeEvent_Explode = "Explode";
+/**
+ * Triggered when the has been thrown
+ *
+ * @param self {@link Grenade} The grenade which has been thrown
+ * @param handler {@link Character} The Character which has thrown
+ */
+type GrenadeEvent_Throw = "Throw";
+//endregion
+
+/**
+ * A Light represents a Lighting source.
+ *
+ * nanos world provides 3 types of lights: {@link LightType.Spot}, {@link LightType.Point} and {@link LightType.React}. All lights are Dynamic and because of that, very expensive! Keep that in mind before spawning 1000 lights.
+ *
+ * @remarks <i>Authority</i>: This can be spawned on both <b><u>Client</u></b> and <b><u>Server</u></b>. (if you spawn it on client, it won't be synchronized with other players).
+ */
 declare class Light extends Actor {
 
+    /**
+     * @param location Defaults to Vector(0, 0, 0)
+     * @param rotation Relevant only for {@link LightType.React} and {@link LightType.Spot} LightTypes. Defaults to Rotator(0, 0, 0)
+     * @param color Defaults to Color(1, 1, 1)
+     * @param light_type Defaults to {@link LightType.Point}
+     * @param intensity Defaults to 30
+     * @param attenuation_radius Defaults to 250
+     * @param cone_angle Relevant only for {@link LightType.Spot} LightType. Defaults to 44
+     * @param inner_cone_angle_percent Inner Cone Angle Percent (Relevant only for {@link LightType.Spot} LightType) (0-1). Defaults to 0
+     * @param max_daw_distance Max Draw Distance (Good for performance - 0 for infinite. Defaults to 5000
+     * @param use_inverse_squared_falloff Whether to use physically based inverse squared distance falloff, where Attenuation Radius is only clamping the light's contribution. ({@link LightType.Spot} and {@link LightType.Point} types only). Defaults to true
+     * @param cast_shadows Defaults to true
+     * @param visible Defaults to true
+     */
+    public constructor(location?: Vector, rotation?: Rotator, color?: Color, light_type?: LightType, intensity?: number, attenuation_radius?: number, cone_angle?: number, inner_cone_angle_percent?: number, max_daw_distance?: number, use_inverse_squared_falloff?: boolean, cast_shadows?: boolean, visible?: boolean);
+
+    /**
+     * Sets the light color
+     *
+     * @param color The light color
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public SetColor(color: Color): void;
+
+    /**
+     * Sets the light Texture Profile
+     *
+     * @param light_profile The Light Profile to use
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public SetTextureLightProfile(light_profile: LightProfile): void;
+
+    /**
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public SetEnabled(is_enabled: boolean): void;
+
+    /**
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public SetCastShadows(is_shadows_enabled: boolean): void;
+
+    /**
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public SetIntensity(intensity: number): void;
+
+    /**
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public SetAttenuationRadius(attenuation_radius: number): void;
 }
 
+/**
+ * A Melee represents an Entity which can be Pickable by a Character and can be used to melee attack, Charactes can hold it with hands with pre-defined handling modes.
+ *
+ * @remarks <i>Authority</i>: This can be spawned only on the <b><u>Server</u></b>.
+ */
 declare class Melee extends Pickable {
 
+    /**
+     * @param location Defaults to Vector(0, 0, 0)
+     * @param rotation Defaults to Rotator(0, 0, 0)
+     * @param asset Defaults to ""
+     * @param collision_type Defaults to {@link CollisionType.Normal}
+     * @param gravity_enabled Defaults to true
+     * @param handling_mode Defaults to {@link HandlingMode.Torch}
+     * @param crosshair_material Defaults to ""
+     */
+    public constructor(location?: Vector, rotation?: Rotator, asset?: string, collision_type?: CollisionType, gravity_enabled?: boolean, handling_mode?: HandlingMode, crosshair_material?: string);
+
+    /**
+     * Sets the Animation when attacking
+     *
+     * @param asset_path The Animation used when attacking
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetAnimationCharacterUse(asset_path: string): void;
+
+    /**
+     * Sets the Sound when attacking
+     *
+     * @param asset_path The Sound used when attacking
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetSoundUse(asset_path: string): void;
+
+    /**
+     * Sets the Base Damage
+     *
+     * @param damage The Base Damage value
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetBaseDamage(damage: number): void;
+
+    /**
+     * Sets the times when to start applying damage and when to end. During this time the collision of the melee will be enabled and the damage will be applied if it hits something
+     *
+     * @param damage_start_time The initial time to start applying damage
+     * @param damage_duration_time The duration time to stop applying damage
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetDamageSettings(damage_start_time: number, damage_duration_time: number): void;
+
+    /**
+     * Sets the cooldown between attacking
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetCooldown(cooldown: number): void;
+
+    /**
+     * Gets the animation asset
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetAnimationCharacterUse(): string;
+
+    /**
+     * Gets the sound asset
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetSoundUse(): string;
+
+    /**
+     * Gets the base damage
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetBaseDamage(): number;
+
+    /**
+     * Gets the cooldown
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetCooldown(): number;
 }
 
+/**
+ * Particle Entity.
+ *
+ * @remarks <i>Authority</i>: This can be spawned on both <b><u>Client</u></b> and <b><u>Server</u></b>. (if you spawn it on client, it won't be synchronized with other players).
+ */
 declare class Particle extends Actor {
 
+    /**
+     * @param location Defaults to Vector(0, 0, 0)
+     * @param rotation Defaults to Rotator(0, 0, 0)
+     * @param asset Defaults to ""
+     * @param auto_destroy auto_destroy means the Entity will be immediately destroyed after spawned, losing references to the Particle System spawned in-game. So if the Particle System itself loops indefinitely, it will keep playing until the Player reconnects. Defaults to true
+     * @param auto_activate Defaults to true
+     */
+    public constructor(location?: Vector, rotation?: Rotator, asset?: string, auto_destroy?: boolean, auto_activate?: boolean);
+
+    /**
+     * Activates the Emitter
+     *
+     * @param should_reset If should reset
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public Activate(should_reset: boolean): void;
+
+    /**
+     * Deactivate the Emitter
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public Deactivate(): void;
+
+    /**
+     * Sets a float parameter in this Particle System
+     *
+     * @param parameter The parameter name
+     * @param value The float value
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public SetParameterFloat(parameter: string, value: number): void;
+
+    /**
+     * Sets a integer parameter in this Particle System
+     *
+     * @param parameter The parameter name
+     * @param value The int value
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public SetParameterInt(parameter: string, value: number): void;
+
+    /**
+     * Sets a boolean parameter in this Particle System
+     *
+     * @param parameter The parameter name
+     * @param value The boolean value
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public SetParameterBool(parameter: string, value: boolean): void;
+
+    /**
+     * Sets a {@link Vector} parameter in this Particle System
+     *
+     * @param parameter The parameter name
+     * @param value The {@link Vector} value
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public SetParameterVector(parameter: string, value: Vector): void;
+
+    /**
+     * Sets a <a href="https://docs.nanos.world/docs/core-concepts/assets#referencing-assets-in-scripting">Material Asset</a> parameter in this Particle System
+     *
+     * @param parameter The parameter name
+     * @param value The <a href="https://docs.nanos.world/docs/core-concepts/assets#referencing-assets-in-scripting">Material Asset</a> value
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public SetParameterMaterial(parameter: string, value: string): void;
+
+    /**
+     * Sets a Material from a <a href="https://docs.nanos.world/docs/scripting-reference/glossary/basic-types#specialpath">Texture</a> parameter in this Particle System
+     *
+     * This will create a Material and set this Texture as it's parameter internally, then set the Material into the Particle parameter
+     *
+     * @param parameter The parameter name
+     * @param value The <a href="https://docs.nanos.world/docs/scripting-reference/glossary/basic-types#specialpath">Texture</a> value
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Client</u></b>.
+     */
+    public SetParameterMaterialFromTexture(parameter: string, value: string): void;
+
+    /**
+     * Sets a Material from a {@link Canvas} parameter in this Particle System
+     *
+     * This will create a Material and set this Canvas as it's parameter internally, then set the Material into the Particle parameter
+     *
+     * @param parameter The parameter name
+     * @param value The {@link Canvas} value
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Client</u></b>.
+     */
+    public SetParameterMaterialFromTexture(parameter: string, value: Canvas): void;
+
+    /**
+     * Sets a Material from a {@link WebUI} parameter in this Particle System
+     *
+     * This will create a Material and set this Canvas as it's parameter internally, then set the Material into the Particle parameter
+     *
+     * @param parameter The parameter name
+     * @param value The {@link WebUI} value
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Client</u></b>.
+     */
+    public SetParameterMaterialFromWebUI(parameter: string, value: WebUI): void;
 }
 
 declare class Player {
 
+    //TODO
+
 }
 
+/**
+ * A Prop represents a Dynamic Mesh which can be spawned in the world, can be grabbed around by characters and have physics.
+ *
+ * <i>Note:</i> If the Prop was spawned by the Client. It will have all interactions disabled (grabbable).
+ *
+ * <i>Note:</i> Props smaller than radius 40 units or very thin (any side smaller than 20 units) will have CCD (Continuous Collision Detection) enabled to avoid falling through the floor or other objects. This will slightly increase the performance cost of them!
+ *
+ * <i>Note:</i> Props bigger than radius 200 units will have Grabbable off by default. This can be overridden with {@link SetGrabbable}.
+ *
+ * <i>Note:</i> Setting {@link CollisionType.Auto} on Props will make them automatically switch between {@link CollisionType.Normal} and {@link CollisionType.IgnoreOnlyPawn} if they are smaller than radius 40 units.
+ *
+ * @remarks <i>Authority</i>: This can be spawned on both <b><u>Client</u></b> and <b><u>Server</u></b>. (if you spawn it on client, it won't be synchronized with other players).
+ */
 declare class Prop extends Paintable {
 
+    /**
+     * @param location Location to spawn. Defaults to Vector(0, 0, 0)
+     * @param rotation Rotation to spawn. Defaults to Rotator(0, 0, 0)
+     * @param asset Static Mesh Asset to use. Defaults to ""
+     * @param collision_type Defaults to {@link CollisionType.Auto}
+     * @param gravity_enabled Default is true.
+     * @param is_grabbable Default is true.
+     * @param force_no_ccd Force CCD to not be used on small Props (may cause Props passing through objects if it's kinda small). Default: false.
+     *
+     * @see <a href="https://docs.nanos.world/docs/core-concepts/assets#referencing-assets-in-scripting">here</a> for more information about the Static Mesh Asset.
+     */
+    public constructor(location?: Vector, rotation?: Rotator, asset?: string, collision_type?: CollisionType, gravity_enabled?: boolean, is_grabbable?: boolean, force_no_ccd?: boolean);
+
+    /**
+     * Sets ability to Characters to Grab this Prop
+     *
+     * @param is_grabbable If the Prop will be able to be grabbable or not
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on <b><u>Server</u></b>.
+     */
+    public SetGrabbable(is_grabbable: boolean): void;
+
+    /**
+     * Sets the Physics damping of this Prop
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the side which <b><u>spawned</u></b> the actor.
+     */
+    public SetPhysicsDamping(linear_damping: number, angular_damping: number): void;
+
+    /**
+     * Gets the Asset name
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetAssetName(): string;
+
+    /**
+     * Gets the Character (if existing) which is holding this
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetHandler(): Character;
+
+    /**
+     * Gets ability to Grab this Prop
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public IsGrabbable(): boolean;
+
+    /**
+     * Subscribes for an {@link PropEvent}
+     *
+     * @return The given function callback itself
+     */
+    public Subscribe(event_name: PropEvent, callback: EventCallback): EventCallback;
+
+    /**
+     * Unsubscribes all callbacks from this Event in this Actor within this Package, optionally passing the function to unsubscribe only that callback
+     *
+     * @param callback Defaults to null
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public Unsubscribe(event_name: PropEvent, callback?: EventCallback): void;
 }
 
+type PropEvent = ActorEvent | PropEvent_Grab | PropEvent_Hit | PropEvent_Interact | PropEvent_TakeDamage | PropEvent_UnGrab;
+//region Prop Events
+/**
+ * Triggered when Character grabs a Prop
+ *
+ * @param self {@link Prop} The prop which was Grabbed
+ * @param character {@link Character} The new Grabber
+ */
+type PropEvent_Grab = "Grab";
+/**
+ * Triggered when this Prop hits something
+ *
+ * @param self {@link Prop} The prop which has been hit
+ * @param impact_force {@link number} The intensity of the Hit normalized by the Prop's weight
+ * @param normal_impulse {@link Vector} The impulse direction it hits
+ * @param impact_location {@link Vector} The world 3D location of the impact
+ * @param velocity {@link Vector} The Prop velocity at the moment it hits
+ */
+type PropEvent_Hit = "Hit";
+/**
+ * When a Character interacts with this Prop (i.e. try to Grab it)
+ *
+ * @param self {@link Prop}
+ * @param character {@link Character}
+ *
+ * @return false to prevent it
+ */
+type PropEvent_Interact = "Interact";
+/**
+ * When Prop takes Damage
+ *
+ * @param self {@link Prop}
+ * @param damage {@link number}
+ * @param bone {@link string} Damaged bone
+ * @param type {@link DamageType} Damage Type
+ * @param from_direction {@link Vector} Direction of the damage relative to the damaged actor
+ * @param instigator {@link Character} The Character which caused the damage
+ * @param causer {@link Actor} The Actor which caused the damage
+ */
+type PropEvent_TakeDamage = "TakeDamage";
+/**
+ * Triggered when this Prop hits something
+ *
+ * @param self {@link Prop} The prop which has been ungrabbed
+ * @param character {@link Character} The old Grabber
+ */
+type PropEvent_UnGrab = "UnGrab";
+//endregion
+
+/**
+ * Scene Capture is an Actor which captures a fully dynamic image of the scene into a Texture. It captures the scene from its view frustum, stores that view as an image, which is then used within a Material.
+ *
+ * <i>Tip:</i> You can use the output Texture from a SceneCapture with {@link Paintable.SetMaterialFromSceneCapture} method!
+ *
+ * <i>Note:</i> Scene Captures capture a scene in real time, this means every tick it will re-render the scene from scratch. Please consider reducing the width/height and even the render_rate to improve it's performance.
+ *
+ * We've worked hard to make SceneCapture as performatic as possible! Some techniques were applied for optimization and reducing the render_rate automatically when you are far and when the generated texture is out of the screen.
+ *
+ * @remarks <i>Authority</i>: This can be spawned only on the <b><u>Client</u></b>.
+ */
 declare class SceneCapture extends Actor {
 
+    /**
+     * @param location Defaults to Vector(0, 0, 0)
+     * @param rotation Defaults to Rotator(0, 0, 0)
+     * @param width Width of the generated Texture. Defaults to 128
+     * @param height Height of the generated Texture. Defaults to 128
+     * @param render_rate Render Rate (how frequent is the capture). Defaults to 0.033
+     * @param view_distance Maximum distance of capturing. Defaults to 5000
+     * @param fov_angle Field of View Angle. Defaults to 90
+     */
+    public constructor(location?: Vector, rotation?: Rotator, width?: number, height?: number, render_rate?: number, view_distance?: number, fov_angle?: number);
+
+    /**
+     * Stops or Restore Capturing
+     */
+    public SetFreeze(freeze: boolean): void;
+
+    /**
+     * Sets the FOV
+     */
+    public SetFOVAngle(angle: number): void;
+
+    /**
+     * Change the output Texture size
+     *
+     * Too high texture will make the capture slower and will affect game performance
+     */
+    public Resize(width: number, height: number): void;
+
+    /**
+     * Set how frequent is the capture
+     *
+     * Setting to 0 will make it capture every frame
+     */
+    public SetRenderRate(render_rate: number): void;
 }
 
 declare class Sound extends Actor {
 
+    //TODO
+
 }
 
+/**
+ * A StaticMesh entity represents a Mesh which can be spawned in the world, can't move and is more optimized for using in decorating the world.
+ *
+ * Static Meshes are like {@link Prop}s, but with fewer interaction options. Static Meshes are aimed to offer better performance on spawning Static "objects" in the world than Props.
+ *
+ * <i>Tip:</i> Automatically all StaticMeshActors present in the Level will be loaded as a StaticMesh entity in the client side.
+ *
+ * @remarks <i>Authority</i>: This can be spawned on both <b><u>Client</u></b> and <b><u>Server</u></b>. (if you spawn it on client, it won't be synchronized with other players).
+ */
 declare class StaticMesh extends Paintable {
 
+    /**
+     *
+     * @param location Location to spawn. Defaults to Vector(0, 0, 0)
+     * @param rotation Rotation to spawn. Defaults to Rotator(0, 0, 0)
+     * @param asset Static Mesh Asset to use. Defaults to ""
+     * @param collision_type Defaults to {@link CollisionType.Normal}
+     *
+     * @see <a href="https://docs.nanos.world/docs/core-concepts/assets#referencing-assets-in-scripting">here</a> for more information about the Static Mesh Asset.
+     */
+    public constructor(location?: Vector, rotation?: Rotator, asset?: string, collision_type?: CollisionType);
+
+    /**
+     * Gets the Asset name
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetMesh(): string;
+
+    /**
+     * If this StaticMesh is from the Level
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Client</u></b>.
+     */
+    public IsFromLevel(): boolean;
+
+    /**
+     * Subscribes for an {@link StaticMeshEvent}
+     *
+     * @return The given function callback itself
+     */
+    public Subscribe(event_name: StaticMeshEvent, callback: EventCallback): EventCallback;
+
+    /**
+     * Unsubscribes all callbacks from this Event in this Actor within this Package, optionally passing the function to unsubscribe only that callback
+     *
+     * @param callback Defaults to null
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public Unsubscribe(event_name: StaticMeshEvent, callback?: EventCallback): void;
 }
 
+type StaticMeshEvent = ActorEvent | StaticMesh_TakeDamage;
+/**
+ * When a StaticMesh takes Damage
+ *
+ * @param self {@link StaticMesh}
+ * @param damage {@link number}
+ * @param bone {@link string} Damaged bone
+ * @param type {@link DamageType} Damage Type
+ * @param from_direction {@link Vector} Direction of the damage relative to the damaged actor
+ * @param instigator {@link Character} The Character which caused the damage
+ * @param causer {@link Actor} The Actor which caused the damage
+ */
+type StaticMesh_TakeDamage = "TakeDamage";
+
+/**
+ * A Text Render class is useful for spawning Texts in 3D world, you can even attach it to other entities.
+ *
+ * <i>Info:</i> If you desire your TextRender to be visible through walls, replace it’s material with the nanos Default TranslucentDepth one!
+ *
+ * <code>SetMaterial("nanos-world::M_NanosTranslucent_Depth")</code>
+ *
+ * You can also tweak it’s color and other properties using the Material methods.
+ *
+ * @remarks <i>Authority</i>: This can be spawned on both <b><u>Client</u></b> and <b><u>Server</u></b>. (if you spawn it on client, it won't be synchronized with other players).
+ */
 declare class TextRender extends Paintable {
 
+    /**
+     * @param location Defaults to Vector(0, 0, 0)
+     * @param rotation Defaults to Rotator(0, 0, 0)
+     * @param text Defaults to ""
+     * @param scale Defaults to Vector(1, 1, 1)
+     * @param color Defaults to Color(1, 1, 1, 1)
+     * @param font_type Defaults to {@link FontType.Roboto}
+     * @param align_camera Defaults to {@link TextRenderAlignCamera.Unaligned}
+     */
+    public constructor(location?: Vector, rotation?: Rotator, text?: string, scale?: Vector, color?: Color, font_type?: FontType, align_camera?: TextRenderAlignCamera);
+
+    /**
+     * Sets the Color Internally this will call the SetMaterialColorParameter("Tint", color) method
+     */
+    public SetColor(color: Color): void;
+
+    /**
+     * Sets the Font
+     */
+    public SetFont(font_type: FontType): void;
+
+    /**
+     * Freeze mesh rebuild, to avoid unnecessary mesh rebuilds when setting a few properties together
+     */
+    public SetFreeze(freeze: boolean): void;
+
+    /**
+     * Sets the Glyph representation settings to generate the 3D Mesh for this text render
+     *
+     * @param extrude Defaults to 0
+     * @param level Defaults to 0
+     * @param bevel_type Defaults to {@link TextRenderBevelType.Convex}
+     * @param bevel_segments Defaults to 0
+     * @param outline Defaults to false
+     */
+    public SetGlyphSettings(extrude?: number, level?: number, bevel_type?: TextRenderBevelType, bevel_segments?: number, outline?: boolean): void;
+
+    /**
+     * Sets the Max Size of the TextRender, optionally scaling it proportionally
+     *
+     * @param max_width Defaults to 0
+     * @param max_height Defaults to 0
+     * @param scale_proportionally Defaults to true
+     */
+    public SetMaxSize(max_width?: number, max_height?: number, scale_proportionally?: boolean): void;
+
+    /**
+     * Sets the Text
+     */
+    public SetText(text: string): void;
+
+    /**
+     * Sets the Text & Font settings for this text render
+     *
+     * @param kerning Defaults to 0
+     * @param line_spacing Defaults to 0
+     * @param word_spacing Defaults to 0
+     * @param horizontal_alignment Defaults to {@link TextRenderHorizontalAlignment.Center}
+     * @param vertical_alignment Defaults to {@link TextRenderVerticalAlignment.Center}
+     */
+    public SetTextSettings(kerning?: number, line_spacing?: number, word_spacing?: number, horizontal_alignment?: TextRenderHorizontalAlignment, vertical_alignment?: TextRenderVerticalAlignment): void;
 }
 
+/**
+ * A Trigger class is a utility class to trigger events when any Entity enters an Area.
+ *
+ * @remarks <i>Authority</i>: This can be spawned only on the <b><u>Server</u></b>.
+ */
 declare class Trigger extends Actor {
 
+    /**
+     * @param location Defaults to Vector(0, 0, 0)
+     * @param rotation Defaults to Rotator(0, 0, 0)
+     * @param extent Size of the Trigger. If using Sphere, only the X is used. Defaults to Vector(0, 0, 0)
+     * @param trigger_type Currently supports {@link TriggerType.Sphere} or {@link TriggerType.Box}. Defaults to {@link TriggerType.Sphere}
+     * @param is_visible Useful for debugging. Defaults to false
+     * @param color Color to paint the Trigger bounds - if Visible. Defaults to {@link Color.RED}
+     */
+    public constructor(location?: Vector, rotation?: Rotator, extent?: Vector, trigger_type?: TriggerType, is_visible?: boolean, color?: Color);
+
+    /**
+     * Forces a Overlap checking to occur, will immediately trigger overlaps
+     *
+     * @remarks <i>Authority</i>: This can be spawned only on the <b><u>Server</u></b>.
+     */
+    public ForceOverlapChecking(): void;
+
+    /**
+     * Sets the extent size of this trigger (sphere triggers will use only the .X component for radius)
+     *
+     * @param extent Sphere triggers will use only the .X component for radius
+     *
+     * @remarks <i>Authority</i>: This can be spawned only on the <b><u>Server</u></b>.
+     */
+    public SetExtent(extent: Vector): void;
+
+    /**
+     * Subscribes for an {@link TriggerEvent}
+     *
+     * @return The given function callback itself
+     */
+    public Subscribe(event_name: TriggerEvent, callback: EventCallback): EventCallback;
+
+    /**
+     * Unsubscribes all callbacks from this Event in this Actor within this Package, optionally passing the function to unsubscribe only that callback
+     *
+     * @param callback Defaults to null
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public Unsubscribe(event_name: TriggerEvent, callback?: EventCallback): void;
 }
 
+type TriggerEvent = ActorEvent | TriggerEvent_BeginOverlap | TriggerEvent_EndOverlap;
+//region Trigger Events
+/**
+ * Triggered when something overlaps this Trigger
+ *
+ * @param self {@link Trigger} The Trigger entity
+ * @param entity {@link Actor} Any Actor which overlaps
+ */
+type TriggerEvent_BeginOverlap = "BeginOverlap";
+/**
+ * Triggered when something leaves this Trigger
+ *
+ * @param self {@link Trigger} The Trigger entity
+ * @param entity {@link Actor} Any Actor which left the Trigger
+ */
+type TriggerEvent_EndOverlap = "EndOverlap";
+//endregion
+
 declare class Vehicle extends Paintable {
+
+    //TODO
 
 }
 
 declare class Weapon extends Pickable {
 
+    //TODO
+
 }
 
 declare class WebUI {
+
+    //TODO
 
 }
 //endregion
