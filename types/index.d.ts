@@ -641,7 +641,7 @@ declare abstract class Pickable extends Paintable {
      *
      * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
      */
-    public GetHandler(): Character|undefined;
+    public GetHandler(): Character|null;
 
     /**
      * Subscribes for an {@link PickableEvent}
@@ -1042,10 +1042,404 @@ type CanvasEvent = ActorEvent | CanvasEvent_Update;
  */
 type CanvasEvent_Update = "Update";
 
+/**
+ * Characters represents Actors which can be possessed, can move and interact with world. They are the default Skeletal Mesh Character built for nanos world
+ *
+ * <i>Note:</i> Characters are Skeletal Meshes using Unreal’s Mannequin Skeletal, with animations and interactivity already natively integrated into nanos world. It is possible to import any Skeletal Mesh (which uses Unreal’s Mannequin Skeletal) to this Character.
+ *
+ * @remarks <i>Authority</i>: This can be spawned only on the <b><u>Server</u></b>.
+ */
 declare class Character extends Paintable {
 
-    // TODO
+    /**
+     * @param location Defaults to Vector(0, 0, 0)
+     * @param rotation Defaults to Rotator(0, 0, 0)
+     * @param skeletal_mesh Defaults to "nanos-world::SK_Mannequin"
+     * @param collision_type Defaults to {@link CollisionType.Normal}
+     * @param gravity_enabled Defaults to true
+     * @param health Defaults to 100
+     * @param death_sounds Defaults to "nanos-world::A_Male_01_Death"
+     * @param pain_sounds Defaults to "nanos-world::A_Male_01_Pain"
+     *
+     * @see <a href="https://docs.nanos.world/docs/core-concepts/assets#referencing-assets-in-scripting">here</a> for more information about skeletal mesh.
+     */
+    public constructor(location?: Vector, rotation?: Rotator, skeletal_mesh?: string, collision_type?: CollisionType, gravity_enabled?: boolean, health?: number, death_sounds?: string, pain_sounds?: number);
 
+    /**
+     * Do damage in a character, will trigger all related events and apply modified damage based on bone. Also will apply impulse if it's a heavy explosion
+     *
+     * @param bone_name Defaults to ""
+     * @param damage_type Defaults to {@link DamageType.Shot}
+     * @param from_direction Defaults to Vector(0, 0, 0)
+     * @param instigator Defaults to null
+     * @param causer The object which caused the damage. Defaults to null
+     */
+    public ApplyDamage(damage: number, bone_name?: string, damage_type?: DamageType, from_direction?: Vector, instigator?: Player, causer?: any): void;
+
+    /**
+     * Spawns and Attaches a SkeletalMesh into this Character, the SkeletalMesh must have the same Skeletal used by the Character Mesh, and will follow all animations from it. Uses a custom ID to be used for removing it further
+     *
+     * @param skeletal_mesh_path Defaults to ""
+     */
+    public AddSkeletalMeshAttached(id: string, skeletal_mesh_path?: string): void;
+
+    /**
+     * Spawns and Attaches a StaticMesh into this Character in a Socket with relative Location and Rotation. Uses a custom ID to be used for removing it further
+     *
+     * @param static_mesh_path Defaults to ""
+     * @param socket Defaults to ""
+     * @param relative_location Defaults to Vector(0, 0, 0)
+     * @param relative_rotation Defaults to Rotator(0, 0, 0)
+     */
+    public AddStaticMeshAttached(id: string, static_mesh_path?: string, socket?: string, relative_location?: Vector, relative_rotation?: Rotator): void;
+
+    /**
+     * Drops any {@link Pickable} the Character is holding.
+     */
+    public Drop(): void;
+
+    /**
+     * Enters the Vehicle at Seat (0 - Driver)
+     *
+     * @param seat Defaults to 0
+     */
+    public EnterVehicle(vehicle: Vehicle, seat?: number): void;
+
+    /**
+     * Gives a {@link Prop} to the Character
+     */
+    public GrabProp(prop: Prop): void;
+
+    /**
+     * Hides a bone of this Character. Check <a href="https://docs.nanos.world/docs/scripting-reference/classes/character#characters-skeleton-bone-names">Bone Names List</a> for all Bone names
+     */
+    public HideBone(bone_name: string): void;
+
+    /**
+     * UnHide a bone of this Character. Check <a href="https://docs.nanos.world/docs/scripting-reference/classes/character#characters-skeleton-bone-names">Bone Names List</a> for all Bone names
+     */
+    public UnHideBone(bone_name: string): void;
+
+    /**
+     * Check if a Bone is Hidden
+     */
+    public IsBoneHidden(bone_name: string): boolean;
+
+    /**
+     * Triggers this Character to jump
+     */
+    public Jump(): void;
+
+    /**
+     * Leaves the current Vehicle
+     */
+    public LeaveVehicle(): void;
+
+    /**
+     * AI: Tries to make this Character to look at Location
+     */
+    public LookAt(location: Vector): void;
+
+    /**
+     * AI: Makes this Character to walk to the Location
+     *
+     * Triggers event {@link CharacterEvent_MoveCompleted}.
+     *
+     * @param acceptance_radius Defaults to 50
+     */
+    public MoveTo(location: Vector, acceptance_radius?: number): void;
+
+    /**
+     * AI: Makes this Character to follow another Actor
+     *
+     * Triggers event {@link CharacterEvent_MoveCompleted}.
+     *
+     * @param acceptance_radius Defaults to 50
+     * @param stop_on_succeed Whether to stop when reaching the target. Defaults to false
+     * @param stop_on_fail Whether to stop when failed to reach the target. Defaults to false
+     * @param update_rate How often to recalculate the AI path. Defaults to 0.25
+     */
+    public Follow(actor: Actor, acceptance_radius?: number, stop_on_succeed?: boolean, stop_on_fail?: boolean, update_rate?: number): void;
+
+    /**
+     * AI: Stops the movement
+     *
+     * Triggers event {@link CharacterEvent_MoveCompleted}.
+     */
+    public StopMovement(): void;
+
+    /**
+     * Gives a Melee/Grenade/Weapon (Pickable) to the Character
+     */
+    public PickUp(pickable: Pickable): void;
+
+    /**
+     * Plays an Animation Montage on this character
+     *
+     * @param slot_type Defaults to {@link AnimationSlotType.FullBody}
+     * @param loop_indefinitely Defaults to false
+     * @param blend_in_time Defaults to 0.25
+     * @param blend_out_time Defaults to 0.25
+     * @param play_rate Defaults to 1
+     * @param stop_all_montages Stops all running Montages from the same Group. Defaults to false
+     */
+    public PlayAnimation(animation_path: string, slot_type?: AnimationSlotType, loop_indefinitely?: boolean, blend_in_time?: number, blend_out_time?: number, play_rate?: number, stop_all_montages?: boolean): void;
+
+    /**
+     * Removes, if existing, a SkeletalMesh from this Character given it's custom ID
+     */
+    public RemoveSkeletalMeshAttached(id: string): void;
+
+    /**
+     * Removes, if existing, a StaticMesh from this Character given it's custom ID
+     */
+    public RemoveStaticMeshAttached(id: string): void;
+
+    /**
+     * Removes all StaticMeshes attached
+     */
+    public RemoveAllStaticMeshAttached(): void;
+
+    /**
+     * Removes all SkeletalMeshes attached
+     */
+    public RemoveAllSkeletalMeshAttached(): void;
+
+    /**
+     * Respawns the Character, fullying it's Health and moving it to it's Initial Location
+     *
+     * @param location If not passed will use the initial location passed when the Character spawned. Defaults to initial location
+     * @param rotation Defaults to Rotator(0, 0, 0)
+     */
+    public Respawn(location?: Vector, rotation?: Rotator): void;
+
+    /**
+     * Sets the Movement Max Acceleration of this Character.
+     *
+     * @param walking Defaults to 768
+     * @param parachuting Defaults to 512
+     * @param skydiving Defaults to 768
+     * @param falling Defaults to 128
+     * @param swimming Defaults to 256
+     * @param swimming_surface Defaults to 256
+     * @param flying Defaults to 1024
+     */
+    public SetAccelerationSettings(walking?: number, parachuting?: number, skydiving?: number, falling?: number, swimming?: number, swimming_surface?: number, flying?: number): void;
+
+    /**
+     * Sets the Movement Braking Settings of this Character.
+     *
+     * @param ground_friction Defaults to 2
+     * @param braking_friction_factor Defaults to 2
+     * @param braking_walking Defaults to 96
+     * @param braking_flying Defaults to 3000
+     * @param braking_swimming Defaults to 10
+     * @param braking_falling Defaults to 0
+     */
+    public SetBrakingSettings(ground_friction?: number, braking_friction_factor?: number, braking_walking?: number, braking_flying?: number, braking_swimming?: number, braking_falling?: number): void;
+
+    /**
+     * Sets the Camera Mode (i.e. Only TPS, FPS or if allow both)
+     *
+     * <i>Info:</> Using FPSOnly CameraMode on AI will lock his body rotation (when using LookAt).
+     */
+    public SetCameraMode(camera_mode: CameraMode): void;
+
+    /**
+     * Sets the Camera Offset (only affects TPS)
+     */
+    public SetCameraOffset(camera_offset: Vector): void;
+
+    /**
+     * Sets if this Character is allowed to Crouch and to Prone
+     */
+    public SetCanCrouch(can_crouch: boolean): void;
+
+    /**
+     * Sets if this Character is allowed to Aim
+     */
+    public SetCanAim(can_aim: boolean): void;
+
+    /**
+     * Sets if this Character is allowed to Drop the Picked up item
+     */
+    public SetCanDrop(can_drop: boolean): void;
+
+    /**
+     * Sets if this Character is allowed to Sprint
+     */
+    public SetCanSprint(can_sprint: boolean): void;
+
+    /**
+     * Sets if this Character is allowed to Grab any Prop
+     */
+    public SetCanGrabProps(can_grab_props: boolean): void;
+
+    /**
+     * Sets if this Character is allowed to Pick up any {@link Pickable} (Weapon, Grenade, Melee...)
+     */
+    public SetCanPickupPickables(can_pickup: boolean): void;
+
+    /**
+     * Sets if this Character is allowed to Punch
+     */
+    public SetCanPunch(can_punch: boolean): void;
+
+    /**
+     * Sets if this Character is allowed to deploy the Parachute
+     */
+    public SetCanDeployParachute(can_deploy_parachute: boolean): void;
+
+    /**
+     * Sets this Character's Capsule size (will affect Camera location and Character's collision) - default is (42, 96)
+     */
+    public SetCapsuleSize(radius: number, half_height: number): void;
+
+    /**
+     * Changes how much damage this character takes
+     */
+    public SetDamageMultiplier(bone_name: string, multiplier: number): void;
+
+    /**
+     * Changes the Death sound when Character dies
+     */
+    public SetDeathSound(sound_asset: string): void;
+
+    /**
+     * Set the Fall Damage multiplier taken when falling from High places (default: 10). Setting to 0 will make the Character to do not take damage or enter ragdoll mode
+     */
+    public SetFallDamageTaken(damage: number): void;
+
+    /**
+     * Sets the Flying Mode
+     */
+    public SetFlyingMode(flying_mode: boolean): void;
+
+    /**
+     * Sets the Field of View multiplier
+     */
+    public SetFOVMultiplier(multiplier: number): void;
+
+    /**
+     * Gait Modes: {@link GaitMode.None}, {@link GaitMode.Walking}, {@link GaitMode.Sprinting}
+     */
+    public SetGaitMode(mode: GaitMode): void;
+
+    /**
+     * Changes the Gravity Scale of this Character (can be negative)
+     */
+    public SetGravityScale(scale: Vector): void;
+
+    /**
+     * Sets the Health of this Character. If the character is dead, respawns it with full health
+     */
+    public SetHealth(new_health: number): void;
+
+    /**
+     * Set the Impact Damage taken when being roamed by things (default: 10). Setting to 0 will make the Character to do not take damage or enter ragdoll mode
+     */
+    public SetImpactDamageTaken(damage: number): void;
+
+    /**
+     * Sets if the Character can receive any damage
+     */
+    public SetInvulnerable(is_invulnerable: boolean): void;
+
+    /**
+     * Sets the velocity of the jump. Default is 450.
+     */
+    public SetJumpZVelocity(velocity: number): void;
+
+    /**
+     * Sets the MaxHealth of this Character
+     */
+    public SetMaxHealth(new_health: number): void;
+
+    /**
+     * Changes the Character Mesh on the fly
+     *
+     * @see <a href="https://docs.nanos.world/docs/core-concepts/assets#referencing-assets-in-scripting">here</a> for more information about skeleton mesh asset.
+     */
+    public SetMesh(skeletal_mesh_asset: string): void;
+
+    /**
+     * Set Morph Target with Name and Value
+     */
+    public SetMorphTarget(name: string, value: number): void;
+
+    /**
+     * Get Morph target with given name
+     */
+    public GetMorphTarget(name: string): number;
+
+    /**
+     * Clear all Morph Target that are set to this Mesh
+     */
+    public ClearMorphTargets(): void;
+
+    /**
+     * Returns the list of all morph targets of this Skeletal Mesh
+     */
+    public GetAllMorphTargetNames(): string[];
+
+    /**
+     * Enables/Disables Character's Movement
+     */
+    public SetMovementEnabled(is_movement_enabled: boolean): void;
+
+    /**
+     * Changes the Parachute Texture
+     *
+     * @see <a href="https://docs.nanos.world/docs/scripting-reference/glossary/basic-types#specialpath">here</a> for more information about texture.
+     */
+    public SetParachuteTexture(texture: string): void;
+
+    /**
+     * Changes the Pain sound when Character takes damage
+     */
+    public SetPainSound(sound_asset: string): void;
+
+    /**
+     * Set the Punch Damage this Character will apply on others (default is 15)
+     */
+    public SetPunchDamage(damage: number): void;
+
+    /**
+     * Sets Character Ragdoll Mode
+     */
+    public SetRagdollMode(ragdoll_enabled: boolean): void;
+
+    /**
+     * 1 = normal
+     */
+    public SetSpeedMultiplier(multiplier: number): void;
+
+    /**
+     * Stance Modes: {@link StanceMode.None}, {@link StanceMode.Standing}, {@link StanceMode.Crouching}, {@link StanceMode.Proning}
+     */
+    public SetStanceMode(mode: StanceMode): void;
+
+    /**
+     * Sets a Team which will disable damaging same Team Members. 0 for Neutral
+     */
+    public SetTeam(team: number): void;
+
+    /**
+     * Changes the Predefined View Mode
+     */
+    public SetViewMode(view_mode: ViewMode): void;
+
+    /**
+     *
+     */
+    public SetWeaponAimMode(aim_mode: AimMode): void;
+
+    /**
+     * Stops an Animation Montage on this character
+     *
+     * @param animation_path Defaults to ""
+     */
+    public StopAnimation(animation_path?: string): void;
 }
 
 /**
@@ -1667,11 +2061,349 @@ declare class Particle extends Actor {
     public SetParameterMaterialFromWebUI(parameter: string, value: WebUI): void;
 }
 
-declare class Player {
+/**
+ * Players are Entities that represents the individual behind the mouse and keyboard. Players are spawned automatically when connected to the server.
+ *
+ * @remarks <i>Authority</i>: You cannot spawn or Destroy Players.
+ */
+declare abstract class Player {
 
-    //TODO
+    /**
+     * Bans the player from the server
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public Ban(reason: string): void;
 
+    /**
+     * Redirects the player to another server
+     *
+     * @param IP Server IP
+     * @param password Server password. Defaults to ""
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public Connect(IP: string, password?: string): void;
+
+    /**
+     * Kicks the player from the server
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public Kick(reason: string): void;
+
+    /**
+     * Makes a {@link Player} to possess and control a {@link Character}
+     *
+     * @param blend_time Defaults to 0
+     * @param exp Defaults to 0
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public Possess(new_character: Character, blend_time?: number, exp?: number): void;
+
+    /**
+     * Sets the Player's Camera Location (only works if not possessing any Character)
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public SetCameraLocation(location: Vector): void;
+
+    /**
+     * Sets the Player's Camera Rotation
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public SetCameraRotation(rotation: Rotator): void;
+
+    /**
+     * Smoothly moves the Player's Camera Location (only works if not possessing any Character)
+     *
+     * @param time Time to interp from current camera location to target location
+     * @param exp Exponential used to smooth interp, use 0 for linear movement. Defaults to 0
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public TranslateCameraTo(location: Vector, time: number, exp?: number): void;
+
+    /**
+     * Smoothly moves the Player's Camera Rotation
+     *
+     * @param time Time to interp from current camera rotation to target rotation
+     * @param exp Exponential used to smooth interp, use 0 for linear movement. Defaults to 0
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public RotateCameraTo(rotation: Rotator, time: number, exp?: number): void;
+
+    /**
+     * Sets the Player’s Camera Socket Offset (Spring Arm Offset)
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public SetCameraSocketOffset(socket_offset: Vector): void;
+
+    /**
+     * Sets the Player’s Camera Arm Length (Spring Arm length)
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public SetCameraArmLength(length: number): void;
+
+    /**
+     * Attaches the Player`s Camera to an Actor
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public AttachCameraTo(actor: Actor, socket_offset: Vector, blend_speed: number): void;
+
+    /**
+     * Resets the Camera to default state (Unspectate and Detaches)
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public ResetCamera(): void;
+
+    /**
+     * Spectates other Player
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public Spectate(player: Player, blend_speed: number): void;
+
+    /**
+     * Sets the player's name
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetName(new_name: string): void;
+
+    /**
+     * Sets a value in this entity, which can be accessed by any package (optionally sync on clients if called from server)
+     *
+     * @param sync_on_clients Server side parameter, if enabled will sync this value through all clients. Defaults to false
+     *
+     * @see <a href="https://docs.nanos.world/docs/core-concepts/scripting/entity-values">here</a> for more information
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public SetValue(key: string, value: any, sync_on_clients?: boolean): void;
+
+    /**
+     * Sets the VOIP Channel of this Player (will only communicate with other players in the same channel)
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetVOIPChannel(channel: number): void;
+
+    /**
+     * Sets the VOIP Settings of this Player
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public SetVOIPSettings(settings: VOIPSetting): void;
+
+    /**
+     * Sets the VOIP Volume of this Player
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public SetVOIPVolume(volume: number): void;
+
+    /**
+     * Release the {@link Player} from the {@link Character}
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public UnPossess(): void;
+
+    /**
+     * Gets the Steam account ID
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetSteamID(): string;
+
+    /**
+     * Gets the nanos account ID
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetAccountID(): string;
+
+    /**
+     * Gets the nanos account name
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetAccountName(): string;
+
+    /**
+     * Gets the Player's Camera Location
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Client</u></b>.
+     */
+    public GetCameraLocation(): Vector;
+
+    /**
+     * Gets the Player's Camera Rotation
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Client</u></b>.
+     */
+    public GetCameraRotation(): Rotator;
+
+    /**
+     * Returns the character of the player. If the player has not yet been assigned a character, nil is returned
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetControlledCharacter(): Character|null;
+
+    /**
+     * Gets the network ID of this entity (same in both client and server)
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetID(): number;
+
+    /**
+     * Gets the IP of this Player
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public GetIP(): string;
+
+    /**
+     * Returns the player's name
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetName(): string;
+
+    /**
+     * Returns the ping of a player
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetPing(): number;
+
+    /**
+     * Returns the type of this Actor
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetType(): string;
+
+    /**
+     * Returns the VOIP Channel of this Player
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     *
+     * <i>Note:</i> Needs checking?
+     */
+    public GetVOIPChannel(): any;
+
+    /**
+     * Gets a value given a key
+     *
+     * @see <a href="https://docs.nanos.world/docs/core-concepts/scripting/entity-values">here</a> for more information
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetValue(key: string, fallback: any): any;
+
+    /**
+     * Returns if this Player started the server from New Game menu
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Client</u></b>.
+     */
+    public IsHost(): string;
+
+    /**
+     * Returns if this is the LocalPlayer
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Client</u></b>.
+     */
+    public IsLocalPlayer(): string;
+
+    /**
+     * Returns if this entity is valid (i.e. wasn't destroyed and points to a valid entity)
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public IsValid(): boolean;
+
+    /**
+     * Returns this Player VOIP Setting
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetVOIPSetting(): VOIPSetting;
+
+    /**
+     * Subscribes for an {@link PlayerEvent}
+     *
+     * @return The given function callback itself
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public Subscribe(event_name: PlayerEvent, callback: EventCallback): EventCallback;
+
+    /**
+     * Unsubscribes all callbacks from this Event in this Actor within this Package, optionally passing the function to unsubscribe only that callback
+     *
+     * @param callback Defaults to null
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public Unsubscribe(event_name: PlayerEvent, callback?: EventCallback): void;
 }
+
+type PlayerEvent = string | PlayerEvent_Destroy | PlayerEvent_Possess | PlayerEvent_Spawn | PlayerEvent_Ready
+    | PlayerEvent_UnPossess | PlayerEvent_VOIP;
+//region Player Events
+/**
+ * Triggered when Player disconnects from the server
+ *
+ * @param self {@link Player}
+ */
+type PlayerEvent_Destroy = "Destroy";
+/**
+ * A Player is now controlling a Character
+ *
+ * @param self {@link Player}
+ * @param character {@link Character}
+ */
+type PlayerEvent_Possess = "Possess";
+/**
+ * Triggered when Player connects to the server
+ *
+ * @param self {@link Player}
+ */
+type PlayerEvent_Spawn = "Spawn";
+/**
+ * Triggered when Player is ready (the client fully joined, loaded the map and all entities and is ready to play)
+ *
+ * @param self {@link Player}
+ *
+ * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+ */
+type PlayerEvent_Ready = "Ready";
+/**
+ * A Character was released from the Player
+ *
+ * @param self {@link Player}
+ * @param character {@link Character}
+ */
+type PlayerEvent_UnPossess = "UnPossess";
+/**
+ * When a Player starts/ends using VOIP
+ *
+ * @param self {@link Player}
+ * @param is_talking {@link boolean}
+ */
+type PlayerEvent_VOIP = "VOIP";
+//endregion
 
 /**
  * A Prop represents a Dynamic Mesh which can be spawned in the world, can be grabbed around by characters and have physics.
@@ -1792,7 +2524,7 @@ type PropEvent_Interact = "Interact";
  * @param type {@link DamageType} Damage Type
  * @param from_direction {@link Vector} Direction of the damage relative to the damaged actor
  * @param instigator {@link Character} The Character which caused the damage
- * @param causer {@link Actor} The Actor which caused the damage
+ * @param causer {@link any} The object which caused the damage
  */
 type PropEvent_TakeDamage = "TakeDamage";
 /**
@@ -1853,10 +2585,124 @@ declare class SceneCapture extends Actor {
     public SetRenderRate(render_rate: number): void;
 }
 
+/**
+ * Class for playing in-game 2D and 3D sounds
+ *
+ * <i>Tip:</i> You can also load raw .ogg files from disk! Please check <a href="https://docs.nanos.world/docs/scripting-reference/glossary/basic-types#specialpath">SpecialPath</a>.
+ *
+ * @remarks <i>Authority</i>: This can be spawned only on the <b><u>Client</u></b>.
+ */
 declare class Sound extends Actor {
 
-    //TODO
+    /**
+     * @param location 3D only. Defaults to Vector(0, 0, 0)
+     * @param asset The Sound Asset or Special Path. Defaults to ""
+     * @param is_2D_sound Defaults to false
+     * @param auto_destroy If to destroy after finished playing. Defaults to true
+     * @param sound_type Used to apply user's volume settings. Defaults to {@link SoundType.SFX}
+     * @param volume Defaults to 1
+     * @param pitch Defaults to 1
+     * @param inner_radius 3D only. Defaults to 400
+     * @param falloff_distance 3D only. Defaults to 3600
+     * @param attenuation_function 3D only. Defaults to {@link AttenuationFunction.Linear}
+     * @param keep_playing_when_silent 3D only - Whether to keep playing this sound when it's not audible - Use with caution, it may cause performance issues! Defaults to false
+     * @param loop_mode Loop Mode (if should force sound to loop). Defaults to {@link SoundLoopMode.Default}
+     *
+     * @see <a href="https://docs.nanos.world/docs/scripting-reference/glossary/basic-types#specialpath">here</a> for more information about the asset parameter.
+     */
+    public constructor(location?: Vector, asset?: string, is_2D_sound?: boolean, auto_destroy?: boolean, sound_type?: SoundType, volume?: number, pitch?: number, inner_radius?: number, falloff_distance?: number, attenuation_function?: AttenuationFunction, keep_playing_when_silent?: boolean, loop_mode?: SoundLoopMode);
 
+    /**
+     * Plays the sound with a fade effect
+     *
+     * @param fade_volume_level Defaults to 1
+     * @param start_time Defaults to 0
+     */
+    public FadeIn(fade_in_duration: number, fade_volume_level?: number, start_time?: number): void;
+
+    /**
+     * Stops the sound with a fade effect
+     *
+     * @param fade_volume_level Defaults to 0
+     * @param destroy_after_fadeout Defaults to false
+     */
+    public FadeOut(fade_out_duration: number, fade_volume_level?: number, destroy_after_fadeout?: boolean): void;
+
+    /**
+     * Starts the sound
+     *
+     * @param start_time Defaults to 0
+     */
+    public Play(start_time?: number): void;
+
+    /**
+     * If a 3D Sound, sets the distance which the sound is inaudible
+     */
+    public SetFalloffDistance(falloff_distance: number): void;
+
+    /**
+     * If a 3D Sound, sets the distance within the volume is 100%
+     */
+    public SetInnerRadius(inner_radius: number): void;
+
+    /**
+     * Sets lowpass filter frequency. Sets 0 to disable it.
+     */
+    public SetLowPassFilter(frequency: number): void;
+
+    /**
+     * Pauses the sound
+     *
+     * @param pause Defaults to true
+     */
+    public SetPaused(pause?: boolean): void;
+
+    /**
+     * Sets the Sound's pitch
+     */
+    public SetPitch(new_pitch: number): void;
+
+    /**
+     * Sets the Sound's volume (0 - 1)
+     */
+    public SetVolume(new_volume: number): void;
+
+    /**
+     * Stops the sound
+     */
+    public Stop(): void;
+
+    /**
+     * Stops the sound after the provided delay
+     */
+    public StopDelayed(delay: number): void;
+
+    /**
+     * Gets if the sound is 2D
+     */
+    public Is2D(): boolean;
+
+    /**
+     * Gets if the sound is playing
+     */
+    public IsPlaying(): boolean;
+
+    /**
+     * Gets the duration of the Sound.
+     */
+    public GetDuration(): number;
+
+    public GetPitch(): number;
+
+    public GetVolume(): number;
+
+    public GetLowPassFilter(): number;
+
+    public GetInnerRadius(): number;
+
+    public GetFalloffDistance(): number;
+
+    public GetSoundType(): number;
 }
 
 /**
@@ -1922,7 +2768,7 @@ type StaticMeshEvent = ActorEvent | StaticMesh_TakeDamage;
  * @param type {@link DamageType} Damage Type
  * @param from_direction {@link Vector} Direction of the damage relative to the damaged actor
  * @param instigator {@link Character} The Character which caused the damage
- * @param causer {@link Actor} The Actor which caused the damage
+ * @param causer {@link any} The any which caused the damage
  */
 type StaticMesh_TakeDamage = "TakeDamage";
 
@@ -2070,23 +2916,941 @@ type TriggerEvent_BeginOverlap = "BeginOverlap";
 type TriggerEvent_EndOverlap = "EndOverlap";
 //endregion
 
+/**
+ * Vehicles are 4-wheeled entities which Characters can possesses and drive.
+ *
+ * Any Skeletal Mesh can be used to create a Vehicle, although only Skeletal Meshes with Wheels bones can use the built-in feature of animated Wheels.
+ *
+ * <i><b>Caution:</b></i> Currently only 4-Wheeled vehicles are supported.
+ *
+ * <i><b>Caution:</b></i> Most of the functions below will reset the vehicle Physics State (automatically), which means the vehicle will stop immediately if moving.
+ *
+ * <i>Tip:</i> Please take a look at our Default’s Vehicle package with all built-in Vehicles already properly configured and ready to use: <a href="https://github.com/nanos-world/nanos-world-vehicles">here</a>
+ *
+ * @remarks <i>Authority</i>: This can be spawned only on the <b><u>Server</u></b>.
+ */
 declare class Vehicle extends Paintable {
 
-    //TODO
+    /**
+     * @param location Defaults to Vector(0, 0, 0)
+     * @param rotation Defaults to Rotator(0, 0, 0)
+     * @param asset Defaults to ""
+     * @param collision_type Defaults to {@link CollisionType.Normal}
+     * @param gravity_enabled Defaults to true
+     * @param auto_create_physics Defaults to true
+     * @param auto_unflip Defaults to true
+     * @param engine_sound_asset Defaults to "nanos-world::A_Vehicle_Engine_01"
+     * @param horn_sound_asset Defaults to "nanos-world::A_Vehicle_Horn_Toyota"
+     * @param brake_sound_asset Defaults to "nanos-world::A_Vehicle_Brake"
+     * @param engine_start_sound_asset Defaults to "nanos-world::A_Car_Engine_Start"
+     * @param vehicle_door_sound_asset Defaults to "nanos-world::A_Vehicle_Door"
+     * @param auto_start_engine Defaults to true
+     *
+     * @see <a href="https://docs.nanos.world/docs/core-concepts/assets#referencing-assets-in-scripting">here</a> for more information about the asset parameter.
+     * @see <a href="https://docs.nanos.world/docs/scripting-reference/glossary/basic-types#specialpath">here</a> for more information about the sound assets.
+     */
+    public constructor(location?: Vector, rotation?: Rotator, asset?: string, collision_type?: CollisionType, gravity_enabled?: boolean, auto_create_physics?: boolean, auto_unflip?: boolean, engine_sound_asset?: string, horn_sound_asset?: string, brake_sound_asset?: string, engine_start_sound_asset?: string, vehicle_door_sound_asset?: string, auto_start_engine?: boolean);
 
+    /**
+     * Spawns and Attaches a StaticMesh into this Character in a Socket with relative Location and Rotation. Uses a custom ID to be used for removing it further
+     *
+     * @param static_mesh_path Defaults to ""
+     * @param socket Defaults to ""
+     * @param relative_location Defaults to Vector(0, 0, 0)
+     * @param relative_rotation Defaults to Rotator(0, 0, 0)
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public AddStaticMeshAttached(id: string, static_mesh_path?: string, socket?: string, relative_location?: Vector, relative_rotation?: Rotator): void;
+
+    /**
+     * Starts or stops the vehicles horn
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public Horn(enable_horn: boolean): void;
+
+    /**
+     * Recreate the Vehicle Physics
+     *
+     * Call this after configuring the vehicle if using <code>auto_create_physics = false</code>
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public RecreatePhysics(): void;
+
+    /**
+     * Removes, if existing, a StaticMesh from this Vehicle given it's custom ID
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public RemoveStaticMeshAttached(id: string): void;
+
+    /**
+     * Removes all StaticMeshes attached
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public RemoveAllStaticMeshesAttached(): void;
+
+    /**
+     * Sets if the Engine auto starts when the driver enters the Vehicle
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetAutoStartEngine(auto_start: boolean): void;
+
+    /**
+     * Sets if the Engine is turned off/on (this will affect Lights, Sounds and ability to Throttle)
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetEngineStarted(started: boolean): void;
+
+    /**
+     * Configures the Vehicle Differential
+     *
+     * @param differential_type Defaults to {@link DifferentialType.LimitedSlip_4W}
+     * @param front_rear_split Ratio of torque split between front and rear. >0.5 means more to front. <0.5 means more to rear (works only with 4W type). Defaults to 0.45
+     * @param front_left_right_split Ratio of torque split between front-left and front-right. >0.5 means more to front-left. <0.5 means more to front-right (works only with 4W and LimitedSlip_FrontDrive). Defaults to 0.5
+     * @param rear_left_right_split Ratio of torque split between rear-left and rear-right. >0.5 means more to rear-left. <0.5 means more to rear-right (works only with 4W and LimitedSlip_FrontDrive). Defaults to 0.5
+     * @param center_bias Maximum allowed ratio of average front wheel rotation speed and rear wheel rotation speeds. Acceptable range: 1 .. infinite (works only with LimitedSlip_4W). Defaults to 1.3
+     * @param front_bias Maximum allowed ratio of front-left and front-right wheel rotation speeds. Acceptable range: 1 .. infinite (works only with LimitedSlip_4W, LimitedSlip_FrontDrive). Defaults to 1.3
+     * @param rear_bias Maximum allowed ratio of rear-left and rear-right wheel rotation speeds. Acceptable range: 1 .. infinite (works only with LimitedSlip_4W, LimitedSlip_FrontDrive). Defaults to 1.3
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetDifferentialSetup(differential_type?: DifferentialType, front_rear_split?: number, front_left_right_split?: number, rear_left_right_split?: number, center_bias?: number, front_bias?: number, rear_bias?: number): void;
+
+    /**
+     * Configures the Vehicle Engine
+     *
+     * @param max_rpm Maximum revolutions per minute of the engine. Defaults to 4500
+     * @param moi Moment of inertia of the engine around the axis of rotation (Kgm^2). Defaults to 1
+     * @param damping_rate_full_throttle Damping rate of engine when full throttle is applied (Kgm^2/s). Defaults to 0.15
+     * @param d_r_zero_trt_clutch_engaged Damping rate of engine in at zero throttle when the clutch is engaged (Kgm^2/s). Defaults to 2
+     * @param d_r_zero_trt_clutch_disengaged Damping rate of engine in at zero throttle when the clutch is disengaged (in neutral gear) (Kgm^2/s). Defaults to 0.35
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetEngineSetup(max_rpm?: number, moi?: number, damping_rate_full_throttle?: number, d_r_zero_trt_clutch_engaged?: number, d_r_zero_trt_clutch_disengaged?: number): void;
+
+    /**
+     * Configures the Vehicle General Settings
+     *
+     * @param drag_coefficient DragCoefficient of the vehicle chassis. Defaults to 0.3
+     * @param throttle_input_rise_rate Rate at which the input value rises. Defaults to 6
+     * @param throttle_input_fall_rate Rate at which the input value falls. Defaults to 10
+     * @param brake_input_rise_rate Rate at which the input value rises. Defaults to 6
+     * @param brake_input_fall_rate Rate at which the input value falls. Defaults to 10
+     * @param handbrake_input_rise_rate Rate at which the input value rises. Defaults to 12
+     * @param handbrake_input_fall_rate Rate at which the input value falls. Defaults to 12
+     * @param steering_input_rise_rate Rate at which the input value rises. Defaults to 2.5
+     * @param steering_input_fall_rate Rate at which the input value falls. Defaults to 5
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetVehicleSetup(drag_coefficient?: number, throttle_input_rise_rate?: number, throttle_input_fall_rate?: number, brake_input_rise_rate?: number, brake_input_fall_rate?: number, handbrake_input_rise_rate?: number, handbrake_input_fall_rate?: number, steering_input_rise_rate?: number, steering_input_fall_rate?: number): void;
+
+    /**
+     * Configures the Vehicle Transmission
+     *
+     * @param has_automatic_transmission Whether to use automatic transmission. Defaults to true
+     * @param gear_switch_time Time it takes to switch gears (seconds). Defaults to 0.5
+     * @param gear_auto_box_latency Minimum time it takes the automatic transmission to initiate a gear change (seconds). Defaults to 2
+     * @param final_ratio The final gear ratio multiplies the transmission gear ratios. Defaults to 4
+     * @param clutch_strength Strength of clutch (Kgm^2/s). Defaults to 10
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetTransmissionSetup(has_automatic_transmission?: boolean, gear_switch_time?: number, gear_auto_box_latency?: number, final_ratio?: number, clutch_strength?: number): void;
+
+    /**
+     * Configures a Vehicle Wheel
+     *
+     * @param shape_radius Radius of the wheel. Defaults to 30
+     * @param shape_width Width of the wheel. Defaults to 10
+     * @param steer_angle Steer angle in degrees for this wheel. Defaults to 70
+     * @param mass Mass of this wheel. Defaults to 20
+     * @param damping_rate Damping rate for this wheel (Kgm^2/s). Defaults to 0.25
+     * @param lat_stiff_max_load Max normalized tire load at which the tire can deliver no more lateral stiffness no matter how much extra load is applied to the tire. Defaults to 2
+     * @param lat_stiff_value How much lateral stiffness to have given lateral slip. Defaults to 17
+     * @param long_stiff_value How much longitudinal stiffness to have given longitudinal slip. Defaults to 1000
+     * @param suspension_force_offset Vertical offset from where suspension forces are applied (along Z-axis). Defaults to 0
+     * @param suspension_max_raise How far the wheel can go above the resting position. Defaults to 10
+     * @param suspension_max_drop How far the wheel can drop below the resting position. Defaults to 10
+     * @param suspension_natural_frequency Oscillation frequency of suspension. Standard cars have values between 5 and 10. Defaults to 7
+     * @param suspension_damping_ratio The rate at which energy is dissipated from the spring. Standard cars have values between 0.8 and 1.2. Values < 1 are more sluggish, values > 1 or more twitchy. Defaults to 1
+     * @param max_brake_torque Max brake torque for this wheel. Defaults to 1500
+     * @param max_handbrake_torque Max handbrake brake torque for this wheel. A handbrake should have a stronger brake torque than the brake. This will be ignored for wheels that are not affected by the handbrake. Defaults to 3000
+     * @param is_affected_by_handbrake Defaults to true
+     * @param offset If bone_name is specified, offset the wheel from the bone’s location. Otherwise this offsets the wheel from the vehicle’s origin. Defaults to Vector(0, 0, 0)
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetWheel(index: number, bone_name: string, shape_radius?: number, shape_width?: number, steer_angle?: number, mass?: number, damping_rate?: number, lat_stiff_max_load?: number, lat_stiff_value?: number, long_stiff_value?: number, suspension_force_offset?: number, suspension_max_raise?: number, suspension_max_drop?: number, suspension_natural_frequency?: number, suspension_damping_ratio?: number, max_brake_torque?: number, max_handbrake_torque?: number, is_affected_by_handbrake?: boolean, offset?: Vector): void;
+
+    /**
+     * Adds a Door at OffsetLocation from root which will pose the Character at SeatLocation with SeatRotation rotation. LeaveLateralOffset is where the Character will be ejected when leaving it (e.g. -150 for left door or 150 for right door)
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetDoor(seat_index: number, offset_location: Vector, seat_location: Vector, seat_rotation: Rotator, trigger_radius: number, leave_lateral_offset: number): void;
+
+    /**
+     * Configures where the Steering Wheel is located, so Characters can grab it procedurally properly
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetSteeringWheelSetup(location: Vector, radius: number): void;
+
+    /**
+     * Configures the Headlights Offset and Color.
+     *
+     * @param color Defaults to Color(1, 0.86, 0.5)
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetHeadlightsSetup(location: Vector, color?: Color): void;
+
+    /**
+     * Configures the Taillights Offset.
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetTaillightsSetup(location: Vector): void;
+
+    /**
+     * Gets the Asset name
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetAssetName(): string;
+
+    /**
+     * Gets a passenger from a seat
+     *
+     * @returns {@link Character} or null if the seat is invalid or empty.
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetPassenger(seat: number): Character|null;
+
+    /**
+     * Gets all passengers
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetPassengers(): LuaTable<number, Character>;
+
+    /**
+     * Gets the current RPM
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Client</u></b>.
+     */
+    public GetRPM(): number;
+
+    /**
+     * Gets the current Gear
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Client</u></b>.
+     */
+    public GetGear(): number;
+
+    /**
+     * Subscribes for an {@link VehicleEvent}
+     *
+     * @return The given function callback itself
+     */
+    public Subscribe(event_name: VehicleEvent, callback: EventCallback): EventCallback;
+
+    /**
+     * Unsubscribes all callbacks from this Event in this Actor within this Package, optionally passing the function to unsubscribe only that callback
+     *
+     * @param callback Defaults to null
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public Unsubscribe(event_name: VehicleEvent, callback?: EventCallback): void;
 }
 
+type VehicleEvent = ActorEvent | VehicleEvent_Horn | VehicleEvent_Hit | VehicleEvent_CharacterEntered
+    | VehicleEvent_CharacterLeft | VehicleEvent_CharacterAttemptEnter | VehicleEvent_CharacterAttemptLeave;
+//region Vehicle Events
+/**
+ * Triggered when Vehicle honks
+ *
+ * @param self {@link Vehicle}
+ * @param is_honking {@link boolean}
+ */
+type VehicleEvent_Horn = "Horn";
+/**
+ * Triggered when Vehicle hits something
+ *
+ * @param self {@link Vehicle}	The Actor that was hit
+ * @param impact_force {@link number} The intensity of the hit normalized by the Vehicle's weight
+ * @param normal_impulse {@link Vector} The impulse direction of the hit
+ * @param impact_location {@link Vector}The world space location of the impact
+ * @param velocity {@link Vector} The Vehicle's velocity at the moment it hit
+ */
+type VehicleEvent_Hit = "Hit";
+/**
+ * Triggered when a Character fully enters the Vehicle
+ *
+ * @param self {@link Vehicle}
+ * @param character {@link Character}
+ * @param seat {@link number} The seat index
+ */
+type VehicleEvent_CharacterEntered = "CharacterEntered";
+/**
+ * Triggered when a Character fully leaves the Vehicle
+ *
+ * @param self {@link Vehicle}
+ * @param character {@link Character}
+ */
+type VehicleEvent_CharacterLeft = "CharacterLeft";
+/**
+ * Triggered when a Character attempts to enter the Vehicle
+ *
+ * @param self {@link Vehicle}
+ * @param character {@link Character}
+ * @param seat {@link number} The seat index
+ *
+ * @return false to prevent it
+ *
+ * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+ */
+type VehicleEvent_CharacterAttemptEnter = "CharacterAttemptEnter";
+/**
+ * Triggered when a Character attempts to leave the Vehicle
+ *
+ * @param self {@link Vehicle}
+ * @param character {@link Character}
+ *
+ * @return false to prevent it
+ *
+ * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+ */
+type VehicleEvent_CharacterAttemptLeave = "CharacterAttemptLeave";
+//endregion
+
+/**
+ * Weapons are fully customizable, all pieces of the weapon can be changed with immense possibility of creation
+ *
+ * <i>Info:</i> Please take a look at our Default’s Weapon package with all built-in Weapons already properly configured and ready to use: <a href="https://github.com/nanos-world/nanos-world-weapons">here</a>
+ *
+ * @remarks <i>Authority</i>: This can be spawned only on the <b><u>Server</u></b>.
+ */
 declare class Weapon extends Pickable {
 
-    //TODO
+    /**
+     * @param location Defaults to Vector(0, 0, 0)
+     * @param rotation Defaults to Rotator(0, 0, 0)
+     * @param asset Defaults to ""
+     * @param collision_type Defaults to {@link CollisionType.Normal}
+     * @param gravity_enabled Defaults to true
+     *
+     * @see <a href="https://docs.nanos.world/docs/core-concepts/assets#referencing-assets-in-scripting">here</a> for more information about the Static Mesh Asset.
+     */
+    public constructor(location?: Vector, rotation?: Rotator, asset?: string, collision_type?: CollisionType, gravity_enabled?: boolean);
 
+    /**
+     * Forces this Weapon to reload (only if being handled by a Character)
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public Reload(): void;
+
+    /**
+     * Sets this Weapon's Ammo in the Bag
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetAmmoBag(new_ammo: number): void;
+
+    /**
+     * Sets this Weapon's Ammo in the Clip
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetAmmoClip(new_ammo: number): void;
+
+    /**
+     * Aux for setting and configuring ammo
+     *
+     * @param ammo_to_reload The amount of ammo which will be effectively reloaded in the clip when reloading. Defaults to ammo_clip
+     * @param clip_capacity How much ammo the clip can hold without needing to reload. Defaults to ammo_clip
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetAmmoSettings(ammo_clip: number, ammo_bag: number, ammo_to_reload?: number, clip_capacity?: number): void;
+
+    /**
+     * Animation played by the Weapon when Firing
+     *
+     * @see <a href="https://docs.nanos.world/docs/core-concepts/assets#referencing-assets-in-scripting">here</a> for more information about the Animation Asset.
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetAnimationFire(animation_asset_path: string): void;
+
+    /**
+     * Animation played by the Character when Firing
+     *
+     * @see <a href="https://docs.nanos.world/docs/core-concepts/assets#referencing-assets-in-scripting">here</a> for more information about the Animation Asset.
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetAnimationCharacterFire(animation_asset_path: string): void;
+
+    /**
+     * Animation played by the Character when Reloading
+     *
+     * Currently this animation must be one of the default ones: AM_Mannequin_Reload_Rifle, AM_Mannequin_Reload_Pistol or AM_Mannequin_Reload_Shotgun, as they have internal triggers to finish the reload
+     *
+     * @param play_rate Defaults to 1
+     *
+     * @see <a href="https://docs.nanos.world/docs/core-concepts/assets#referencing-assets-in-scripting">here</a> for more information about the Animation Asset.
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetAnimationReload(animation_asset_path: string, play_rate?: number): void;
+
+    /**
+     * Set the Bullet Color
+     *
+     * Only has effect if using Bullet Trail particle P_Bullet_Trail or if you particle has the Color parameter
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetBulletColor(color: Color): void;
+
+    /**
+     * Aux for setting and configuring the Bullet
+     *
+     * @param bullet_count 1 for common weapons, > 1 for shotguns
+     * @param bullet_velocity Visuals only
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetBulletSettings(bullet_count: number, bullet_max_distance: number, bullet_velocity: number, bullet_color: Color): void;
+
+    /**
+     * Speed of shots
+     *
+     * @param cadence 1 shot at each cadence second
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetCadence(cadence: number): void;
+
+    /**
+     * Capacity of the Weapon's Clip
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetClipCapacity(clip: number): void;
+
+    /**
+     * Base Weapon's Damage
+     *
+     * This will be multiplied by multiplier factors when hitting specific bones
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetDamage(damage: number): void;
+
+    /**
+     * Sets how the Character grabs this Weapon
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetHandlingMode(mode: HandlingMode): void;
+
+    /**
+     * Left Hand Offset
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetLeftHandTransform(location: Vector, rotation: Rotator): void;
+
+    /**
+     * The mesh used when the Character reloads the weapon. Will drop this Mesh as an animation effect.
+     *
+     * @see <a href="https://docs.nanos.world/docs/core-concepts/assets#referencing-assets-in-scripting">here</a> for more information about the Static Mesh Asset.
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetMagazineMesh(static_mesh_asset_path: string): void;
+
+    /**
+     * Particle of the Bullet flying
+     *
+     * @see <a href="https://docs.nanos.world/docs/core-concepts/assets#referencing-assets-in-scripting">here</a> for more information about the Particle Asset.
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetParticlesBulletTrail(particle_asset_path: string): void;
+
+    /**
+     * Particle of the Fire Blast in the muzzle
+     *
+     * @see <a href="https://docs.nanos.world/docs/core-concepts/assets#referencing-assets-in-scripting">here</a> for more information about the Particle Asset.
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetParticlesBarrel(particle_asset_path: string): void;
+
+    /**
+     * Particle of the empty bullet flying from the weapon when shooting
+     *
+     * @see <a href="https://docs.nanos.world/docs/core-concepts/assets#referencing-assets-in-scripting">here</a> for more information about the Particle Asset.
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetParticlesShells(particle_asset_path: string): void;
+
+    /**
+     * Offset of Right Hand. To position relative to the camera.
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetRightHandOffset(offset: Vector): void;
+
+    /**
+     * The FOV multiplier when ADS
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetSightFOVMultiplier(multiplier: number): void;
+
+    /**
+     * Offset applied to align player's head to weapon's sight and rotation applied on the weapon when ADS
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetSightTransform(location: Vector, rotation: Rotator): void;
+
+    /**
+     * Sound when weapon has not bullet and try to shoot
+     *
+     * @see <a href="https://docs.nanos.world/docs/scripting-reference/glossary/basic-types#specialpath">here</a> for more information about the Sound Asset.
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetSoundDry(sound_asset_path: string): void;
+
+    /**
+     * Sound when Loading a magazine
+     *
+     * @see <a href="https://docs.nanos.world/docs/scripting-reference/glossary/basic-types#specialpath">here</a> for more information about the Sound Asset.
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetSoundLoad(sound_asset_path: string): void;
+
+    /**
+     * Sound when Unloading a magazine
+     *
+     * @see <a href="https://docs.nanos.world/docs/scripting-reference/glossary/basic-types#specialpath">here</a> for more information about the Sound Asset.
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetSoundUnload(sound_asset_path: string): void;
+
+    /**
+     * Sound when Zooming
+     *
+     * @see <a href="https://docs.nanos.world/docs/scripting-reference/glossary/basic-types#specialpath">here</a> for more information about the Sound Asset.
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetSoundZooming(sound_asset_path: string): void;
+
+    /**
+     * Sound when Aiming
+     *
+     * @see <a href="https://docs.nanos.world/docs/scripting-reference/glossary/basic-types#specialpath">here</a> for more information about the Sound Asset.
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetSoundAim(sound_asset_path: string): void;
+
+    /**
+     * Sound when Shooting
+     *
+     * @see <a href="https://docs.nanos.world/docs/scripting-reference/glossary/basic-types#specialpath">here</a> for more information about the Sound Asset.
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetSoundFire(sound_asset_path: string): void;
+
+    /**
+     * Sound when firing with only having X remaining bullets in the magazine, useful for last shot 'ping' or sound when low on bullets
+     *
+     * @param remaining_bullets_count The amount of remaining bullet to start playing this sound. Defaults to 1
+     *
+     * @see <a href="https://docs.nanos.world/docs/scripting-reference/glossary/basic-types#specialpath">here</a> for more information about the Sound Asset.
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetSoundFireLastBullets(sound_asset_path: string, remaining_bullets_count?: number): void;
+
+    /**
+     * Base Weapon's Spread (the higher the less precision - recommended value: 20)
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetSpread(spread: number): void;
+
+    /**
+     * Base Weapon's Recoil - 0 means no Recoil, default is 1
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetRecoil(recoil: number): void;
+
+    /**
+     * Sets if the Weapon can hold to keep firing and if it needs to release to fire
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetUsageSettings(can_hold_use: boolean, hold_release_use: boolean): void;
+
+    /**
+     * Sets how the bullet will pass through walls
+     *
+     * @param max_distance Max distance to pass through another wall
+     * @param damage_multiplier Damage given if wallbangged
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetWallbangSettings(max_distance: number, damage_multiplier: number): void;
+
+    /**
+     * Gets this Weapon's Ammo Bag
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetAmmoBag(): number;
+
+    /**
+     * Gets this Weapon's Ammo Clip
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetAmmoClip(): number;
+
+    /**
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetAmmoToReload(): number;
+
+    /**
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetHandlingMode(): HandlingMode;
+
+    /**
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetAnimationCharacterFire(): string;
+
+    public GetAnimationFire(): string;
+
+    /**
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetMagazineMesh(): string;
+
+    /**
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetParticlesBulletTrail(): string;
+
+    /**
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetParticlesBarrel(): string;
+
+    /**
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetParticlesShells(): string;
+
+    /**
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetSoundDry(): string;
+
+    /**
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetSoundLoad(): string;
+
+    /**
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetSoundUnload(): string;
+
+    /**
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetSoundZooming(): string;
+
+    /**
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetSoundAim(): string;
+
+    /**
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetSoundFire(): string;
+
+    /**
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetCanHoldUse(): boolean;
+
+    /**
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetHoldReleaseUse(): boolean;
+
+    /**
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetBulletCount(): number;
+
+    /**
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetBulletColor(): Color;
+
+    /**
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetCadence(): number;
+
+    /**
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetClipCapacity(): number;
+
+    /**
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetDamage(): number;
+
+    /**
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetRightHandOffset(): Vector;
+
+    /**
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetLeftHandLocation(): Vector;
+
+    /**
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetLeftHandRotation(): Rotator;
+
+    /**
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetSightLocation(): Vector;
+
+    /**
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetSightRotation(): Rotator;
+
+    /**
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetSightFOVMultiplier(): number;
+
+    /**
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetSpread(): number;
+
+    /**
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public GetRecoil(): number;
+
+    /**
+     * Subscribes for an {@link WeaponEvent}
+     *
+     * @return The given function callback itself
+     */
+    public Subscribe(event_name: WeaponEvent, callback: EventCallback): EventCallback;
+
+    /**
+     * Unsubscribes all callbacks from this Event in this Actor within this Package, optionally passing the function to unsubscribe only that callback
+     *
+     * @param callback Defaults to null
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public Unsubscribe(event_name: WeaponEvent, callback?: EventCallback): void;
 }
 
+type WeaponEvent = ActorEvent | WeaponEvent_Fire | WeaponEvent_Reload | WeaponEvent_AmmoClipChanged | WeaponEvent_AmmoBagChanged;
+//region Weapon Events
+/**
+ * Triggered when Weapon fires (this will be triggered for each shot)
+ *
+ * @param self {@link Weapon}
+ * @param shooter {@link Character}
+ */
+type WeaponEvent_Fire = "Fire";
+/**
+ * When a Weapon is reloaded, optionally by a Character
+ *
+ * @param self {@link Weapon}
+ * @param shooter {@link Character}
+ * @param ammo_to_reload {@link number}
+ */
+type WeaponEvent_Reload = "Reload";
+/**
+ * When the Ammo Clip is changed, by reloading or manually setting through scripting
+ *
+ * @param self {@link Weapon}
+ * @param old_ammo_clip {@link number}
+ * @param new_ammo_clip {@link number}
+ */
+type WeaponEvent_AmmoClipChanged = "AmmoClipChanged";
+/**
+ * When the Ammo Bag is changed, by reloading or manually setting through scripting
+ *
+ * @param self {@link Weapon}
+ * @param old_ammo_bag {@link number}
+ * @param new_ammo_bag {@link number}
+ */
+type WeaponEvent_AmmoBagChanged = "AmmoBagChanged";
+//endregion
+
+/**
+ * Class for spawning a web browser in the screen.
+ *
+ * <i>Tip:</i> This HTML implementation is built upon same core as WebKit/Safari using <a href="https://ultralig.ht/">Ultralight</a> library, a next-generation HTML Renderer.
+ *
+ * <i><b>Caution:</b></i> We are using a beta build of Ultralight, which now supports Audio and Video. Although it is still very unstable and some crashes may happen! Also the Audio currently plays only in 2D.
+ *
+ * @remarks <i>Authority</i>: This can be spawned only on the <b><u>Client</u></b>.
+ */
 declare class WebUI {
 
-    //TODO
+    /**
+     * <i>Tip:</i> Loading a .html file supports the following searchers, which are looked in the following order:
+     * 1. Relative to current-file-path/
+     * 2. Relative to current-package/Client/
+     * 3. Relative to current-package/
+     * 4. Relative to Packages/
+     *
+     * @param name Currently not used. Defaults to ""
+     * @param path URL or <code>file:///my_file.html</code> or <a href="https://docs.nanos.world/docs/scripting-reference/glossary/basic-types#specialpath">HTML Special Path</a>. Defaults to ""
+     * @param is_visible if WebUI is visible by default. Defaults to true
+     * @param is_transparent if WebUI background is transparent. Defaults to true
+     * @param auto_resize if should auto resize when screen changes it's size (useful OFF when you are painting meshes with WebUI). Defaults to true
+     * @param width size of the WebUI when you are not using auto_resize. Defaults to 0
+     * @param height size of the WebUI when you are not using auto_resize. Defaults to 0
+     */
+    public constructor(name?: string, path?: string, is_visible?: boolean, is_transparent?: boolean, auto_resize?: boolean, width?: number, height?: number);
 
+    /**
+     * Puts this WebUI in the front of all WebUIs
+     */
+    public BringToFront(): void;
+
+    /**
+     * Calls an Event on the Browser's JavaScript
+     */
+    public CallEvent(event_name: string, ...args: any[]): void;
+
+    /**
+     * Destroys this Browser
+     */
+    public Destroy(): void;
+
+    /**
+     * Loads a new File/URL in this Browser
+     */
+    public LoadURL(url: string): void;
+
+    /**
+     * Enables the focus on this browser (i.e. can receive Keyboard input). You must call it when you want to enable Keyboard Input on WebUIs (after disabling Client's Input)
+     *
+     * @remarks Only one browser can have focus per time.
+     */
+    public SetFocus(): void;
+
+    /**
+     * Freezes the WebUI Rendering to the surface (it will still execute the JS under the hood)
+     */
+    public SetFreeze(): void;
+
+    /**
+     * Toggles the visibility
+     */
+    public SetVisible(is_visible: boolean): void;
+
+    /**
+     * Gets if this entity is Valid
+     */
+    public IsValid(): boolean;
+
+    /**
+     * Gets the network ID of this entity
+     */
+    public GetID(): number;
+
+    /**
+     * Returns the type of this Entity
+     */
+    public GetType(): string;
+
+    /**
+     * Returns if this WebUI is currently visible
+     */
+    public IsVisible(): boolean;
+
+    /**
+     * Subscribes for an {@link WebUIEvent}
+     *
+     * @return The given function callback itself
+     */
+    public Subscribe(event_name: WebUIEvent, callback: EventCallback): EventCallback;
+
+    /**
+     * Unsubscribes all callbacks from this Event in this Actor within this Package, optionally passing the function to unsubscribe only that callback
+     *
+     * @param callback Defaults to null
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public Unsubscribe(event_name: WebUIEvent, callback?: EventCallback): void;
 }
+
+type WebUIEvent = string | WebUIEvent_Failed | WebUIEvent_Ready;
+//region WebUI Events
+/**
+ * Triggered when this page fails to load
+ *
+ * @param error_code {@link number}
+ * @param message {@link string}
+ */
+type WebUIEvent_Failed = "Failed";
+/**
+ * Triggered when this page is fully loaded
+ */
+type WebUIEvent_Ready = "Ready";
+//endregion
 //endregion
 
 //region Static Classes
@@ -3772,7 +5536,7 @@ declare enum AttachmentRule {
     SnapToTarget,
 }
 
-declare enum AttenuationType {
+declare enum AttenuationFunction {
     Linear,
     Logarithmic,
     Inverse,
@@ -4045,7 +5809,7 @@ declare enum SoundLoopMode {
     Never,
 }
 
-declare enum StanceMod {
+declare enum StanceMode {
     None,
     Standing,
     Crouching,
