@@ -1658,35 +1658,189 @@ type CharacterEvent = ActorEvent | CharacterEvent_AnimationBeginNotify | Charact
     | CharacterEvent_TakeDamage | CharacterEvent_UnGrabProp | CharacterEvent_UnPossessed | CharacterEvent_ViewModeChanged
     | CharacterEvent_WeaponAimModeChanged;
 //region Character Events
+/**
+ *
+ *
+ * @param self {@link Character}
+ */
 type CharacterEvent_AnimationBeginNotify = "AnimationBeginNotify";
+/**
+ *
+ *
+ * @param self {@link Character}
+ */
 type CharacterEvent_AnimationEndNotify = "AnimationEndNotify";
+/**
+ *
+ *
+ * @param self {@link Character}
+ */
 type CharacterEvent_Death = "Death";
+/**
+ *
+ *
+ * @param self {@link Character}
+ */
 type CharacterEvent_Drop = "Drop";
+/**
+ *
+ *
+ * @param self {@link Character}
+ */
 type CharacterEvent_EnterVehicle = "EnterVehicle";
+/**
+ *
+ *
+ * @param self {@link Character}
+ */
 type CharacterEvent_AttemptEnterVehicle = "AttemptEnterVehicle";
+/**
+ *
+ *
+ * @param self {@link Character}
+ */
 type CharacterEvent_FallingModeChanged = "FallingModeChanged";
+/**
+ *
+ *
+ * @param self {@link Character}
+ */
 type CharacterEvent_Fire = "Fire";
+/**
+ *
+ *
+ * @param self {@link Character}
+ */
 type CharacterEvent_GaitModeChanged = "GaitModeChanged";
+/**
+ *
+ *
+ * @param self {@link Character}
+ */
 type CharacterEvent_GrabProp = "GrabProp";
+/**
+ *
+ *
+ * @param self {@link Character}
+ */
 type CharacterEvent_HealthChanged = "HealthChanged";
+/**
+ *
+ *
+ * @param self {@link Character}
+ */
 type CharacterEvent_Highlight = "Highlight";
+/**
+ *
+ *
+ * @param self {@link Character}
+ */
 type CharacterEvent_Interact = "Interact";
+/**
+ *
+ *
+ * @param self {@link Character}
+ */
 type CharacterEvent_LeaveVehicle = "LeaveVehicle";
+/**
+ *
+ *
+ * @param self {@link Character}
+ */
 type CharacterEvent_AttemptLeaveVehicle = "AttemptLeaveVehicle";
+/**
+ *
+ *
+ * @param self {@link Character}
+ */
 type CharacterEvent_MoveCompleted = "MoveCompleted";
+/**
+ *
+ *
+ * @param self {@link Character}
+ */
 type CharacterEvent_PickUp = "PickUp";
+/**
+ * When Character is possessed
+ *
+ * @param self {@link Character}
+ */
 type CharacterEvent_Possessed = "Possessed";
+/**
+ * When Character punches
+ *
+ * @param self {@link Character}
+ */
 type CharacterEvent_Punch = "Punch";
+/**
+ * When Character enters or leaves ragdoll
+ *
+ * @param self {@link Character}
+ */
 type CharacterEvent_RagdollModeChanged = "RagdollModeChanged";
+/**
+ * When Character attempts to reload a weapon
+ *
+ * @param self {@link Character}
+ *
+ * @return false to prevent it
+ */
 type CharacterEvent_AttemptReload = "AttemptReload";
+/**
+ * When Character reloads a weapon
+ *
+ * @param self {@link Character}
+ */
 type CharacterEvent_Reload = "Reload";
+/**
+ * When Character Respawns
+ *
+ * @param self {@link Character}
+ */
 type CharacterEvent_Respawn = "Respawn";
+/**
+ * Stance Modes: None, Standing, Crouching, Proning
+ *
+ * @param self {@link Character}
+ */
 type CharacterEvent_StanceModeChanged = "StanceModeChanged";
+/**
+ * Swimming Modes: None, Surface, Underwater
+ *
+ * @param self {@link Character}
+ */
 type CharacterEvent_SwimmingModeChanged = "SwimmingModeChanged";
+/**
+ * When Character takes Damage
+ *
+ * @param self {@link Character}
+ *
+ * @return false to cancel the damage (will still display animations, particles and apply impact forces)
+ */
 type CharacterEvent_TakeDamage = "TakeDamage";
+/**
+ * When Character drops a Prop
+ *
+ * @param self {@link Character}
+ */
 type CharacterEvent_UnGrabProp = "UnGrabProp";
+/**
+ * When Character is unpossessed
+ *
+ * @param self {@link Character}
+ */
 type CharacterEvent_UnPossessed = "UnPossessed";
+/**
+ * When Character changes it's View Mode: FPS, TPS1, TPS2, TPS3
+ *
+ * @param self {@link Character}
+ */
 type CharacterEvent_ViewModeChanged = "ViewModeChanged";
+/**
+ * Aim Modes: None, ADS, ZoomedZoom, Zoomed, ZoomedFar
+ *
+ * @param self {@link Character}
+ */
 type CharacterEvent_WeaponAimModeChanged = "WeaponAimModeChanged";
 //endregion
 
