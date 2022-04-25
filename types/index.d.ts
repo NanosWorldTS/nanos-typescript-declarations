@@ -1440,7 +1440,255 @@ declare class Character extends Paintable {
      * @param animation_path Defaults to ""
      */
     public StopAnimation(animation_path?: string): void;
+
+    /**
+     * UnGrabs/Drops the Prop the Character is holding
+     */
+    public UnGrabProp(): void;
+
+    /**
+     * Gets Character Ragdoll Mode
+     */
+    public IsInRagdollMode(): boolean;
+
+    /**
+     * Gets if the Character can receive damage
+     */
+    public IsInvulnerable(): boolean;
+
+    /**
+     * Gets Character Movement Enabled
+     */
+    public IsMovementEnabled(): boolean;
+
+    /**
+     *
+     */
+    public GetCameraMode(): CameraMode;
+
+    /**
+     *
+     */
+    public GetCanDrop(): boolean;
+
+    /**
+     *
+     */
+    public GetCanPunch(): boolean;
+
+    /**
+     *
+     */
+    public GetCanAim(): boolean;
+
+    /**
+     *
+     */
+    public GetCanCrouch(): boolean;
+
+    /**
+     *
+     */
+    public GetCanSprint(): boolean;
+
+    /**
+     *
+     */
+    public GetCanGrabProps(): boolean;
+
+    /**
+     *
+     */
+    public GetCanPickupPiackables(): boolean;
+
+    /**
+     * Gets the Capsule Size set by {@link SetCapsuleSize}
+     */
+    public GetCapsuleSize(): {Radius: number, HalfHeight: number};
+
+    /**
+     * Gets the Bone Transform in World Space
+     */
+    public GetBoneTransform(bone_name: string): {Location: Vector, Rotation: Rotator};
+
+    /**
+     * Gets the rotation this character is looking at
+     */
+    public GetControlRotation(): Rotator;
+
+    /**
+     *
+     */
+    public GetDamageMultiplier(bone_name: string): number;
+
+    /**
+     *
+     */
+    public GetFallDamageTaken(): number;
+
+    /**
+     * Gets the Falling Mode
+     */
+    public GetFallingMode(): FallingMode;
+
+    /**
+     * Gets if the Character is in Flying Mode
+     */
+    public GetFlyingMode(): any;
+
+    /**
+     * Gets the Gait Mode
+     */
+    public GetGaitMode(): GaitMode;
+
+    /**
+     * Gets the Grabbing Prop
+     */
+    public GetGrappedProp(): Prop|null;
+
+    /**
+     * Gets the Gravity Scale of this Character
+     */
+    public GetGravityScale(): number;
+
+    /**
+     * Gets the Character's Health.
+     */
+    public GetHealth(): number;
+
+    /**
+     *
+     */
+    public GetImpactDamageTaken(): number;
+
+    /**
+     *
+     */
+    public GetJumpZVelocity(): number;
+
+    /**
+     * Gets the Character's MaxHealth.
+     */
+    public GetMaxHealth(): number;
+
+    /**
+     * Gets the Mesh Asset name
+     */
+    public GetMesh(): string;
+
+    /**
+     * Gets the Character moving to location, returns Vector(0, 0, 0) if it's not
+     */
+    public GetMovingTo(): Vector;
+
+    /**
+     * Gets the holding Picked Melee/Grenade/Weapon
+     */
+    public GetPicked(): Pickable|null;
+
+    /**
+     * Gets the Player controlling this Character
+     */
+    public GetPlayer(): Player|null;
+
+    /**
+     *
+     */
+    public GetPunchDamage(): number;
+
+    /**
+     *
+     */
+    public GetSpeedMultiplier(): number;
+
+    /**
+     *
+     */
+    public GetStanceMode(): StanceMode;
+
+    /**
+     *
+     */
+    public GetSwimmingMode(): SwimmingMode;
+
+    /**
+     *
+     */
+    public GetTeam(): number;
+
+    /**
+     * Gets the Vehicle the Character is on
+     */
+    public GetVehicle(): Vehicle|null;
+
+    /**
+     * Gets Character View Mode
+     */
+    public GetViewMode(): ViewMode;
+
+    /**
+     * Gets Character Aim Mode
+     */
+    public GetWeaponAimMode(): AimMode;
+
+    /**
+     * Subscribes for an {@link CharacterEvent}
+     *
+     * @return The given function callback itself
+     */
+    public Subscribe(event_name: CharacterEvent, callback: EventCallback): EventCallback;
+
+    /**
+     * Unsubscribes all callbacks from this Event in this Actor within this Package, optionally passing the function to unsubscribe only that callback
+     *
+     * @param callback Defaults to null
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public Unsubscribe(event_name: CharacterEvent, callback?: EventCallback): void;
 }
+
+type CharacterEvent = ActorEvent | CharacterEvent_AnimationBeginNotify | CharacterEvent_AnimationEndNotify
+    | CharacterEvent_Death | CharacterEvent_Drop | CharacterEvent_EnterVehicle | CharacterEvent_AttemptEnterVehicle
+    | CharacterEvent_FallingModeChanged | CharacterEvent_Fire | CharacterEvent_GaitModeChanged
+    | CharacterEvent_GrabProp | CharacterEvent_HealthChanged | CharacterEvent_Highlight | CharacterEvent_Interact
+    | CharacterEvent_LeaveVehicle |CharacterEvent_AttemptLeaveVehicle | CharacterEvent_MoveCompleted | CharacterEvent_PickUp
+    | CharacterEvent_Possessed | CharacterEvent_Punch | CharacterEvent_RagdollModeChanged | CharacterEvent_AttemptReload
+    | CharacterEvent_Reload | CharacterEvent_Respawn | CharacterEvent_StanceModeChanged | CharacterEvent_SwimmingModeChanged
+    | CharacterEvent_TakeDamage | CharacterEvent_UnGrabProp | CharacterEvent_UnPossessed | CharacterEvent_ViewModeChanged
+    | CharacterEvent_WeaponAimModeChanged;
+//region Character Events
+type CharacterEvent_AnimationBeginNotify = "AnimationBeginNotify";
+type CharacterEvent_AnimationEndNotify = "AnimationEndNotify";
+type CharacterEvent_Death = "Death";
+type CharacterEvent_Drop = "Drop";
+type CharacterEvent_EnterVehicle = "EnterVehicle";
+type CharacterEvent_AttemptEnterVehicle = "AttemptEnterVehicle";
+type CharacterEvent_FallingModeChanged = "FallingModeChanged";
+type CharacterEvent_Fire = "Fire";
+type CharacterEvent_GaitModeChanged = "GaitModeChanged";
+type CharacterEvent_GrabProp = "GrabProp";
+type CharacterEvent_HealthChanged = "HealthChanged";
+type CharacterEvent_Highlight = "Highlight";
+type CharacterEvent_Interact = "Interact";
+type CharacterEvent_LeaveVehicle = "LeaveVehicle";
+type CharacterEvent_AttemptLeaveVehicle = "AttemptLeaveVehicle";
+type CharacterEvent_MoveCompleted = "MoveCompleted";
+type CharacterEvent_PickUp = "PickUp";
+type CharacterEvent_Possessed = "Possessed";
+type CharacterEvent_Punch = "Punch";
+type CharacterEvent_RagdollModeChanged = "RagdollModeChanged";
+type CharacterEvent_AttemptReload = "AttemptReload";
+type CharacterEvent_Reload = "Reload";
+type CharacterEvent_Respawn = "Respawn";
+type CharacterEvent_StanceModeChanged = "StanceModeChanged";
+type CharacterEvent_SwimmingModeChanged = "SwimmingModeChanged";
+type CharacterEvent_TakeDamage = "TakeDamage";
+type CharacterEvent_UnGrabProp = "UnGrabProp";
+type CharacterEvent_UnPossessed = "UnPossessed";
+type CharacterEvent_ViewModeChanged = "ViewModeChanged";
+type CharacterEvent_WeaponAimModeChanged = "WeaponAimModeChanged";
+//endregion
 
 /**
  * The Database entity provides programmers a way to access SQL databases easily through scripting.
