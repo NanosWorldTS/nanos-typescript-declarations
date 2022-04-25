@@ -11,6 +11,23 @@ run the following command
 npm i -D nanos-world-types
 ````
 
+## Usage / How to use
+In order to use the declarations you need to tell TypeScript that you want to use them. In order to that you have two options:
+
+### Option 1:
+Reference the declaration in your TypeScript files. Therefore you just need to paste the following line in every TypeScript file where you need the declarations:
+````typescript
+/// <reference types="nanos-world-types" />
+````
+
+### Option 2:
+Reference the declaration in your tsconfig.json. Just add the following snippet to the **compilerOptions** object of your `tsconfig.json`:
+````json
+"types": [
+    "nanos-world-types"
+]
+````
+
 ## Versioning
 The version number for the declarations are built by the following schema:
 - The first number is the documentations number of nanos world but without the dots
