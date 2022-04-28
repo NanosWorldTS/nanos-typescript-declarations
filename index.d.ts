@@ -10,6 +10,8 @@ declare abstract class Actor {
 
     /**
      * Returns an array containing all Actors of the class this is called on (copy)
+     *
+     * @noSelf
      */
     public static GetAll<T extends Actor>(): T[];
 
@@ -17,11 +19,15 @@ declare abstract class Actor {
      * Returns a specific {@link Actor} of this class at an index
      *
      * @remarks The index starts at 1!
+     *
+     * @noSelf
      */
     public static GetByIndex<T extends Actor>(index: number): T;
 
     /**
      * Returns how many {@link Actor}s of this class exist
+     *
+     * @noSelf
      */
     public static GetCount(): number;
 
@@ -31,6 +37,8 @@ declare abstract class Actor {
      * instead of creating and returning a copy of the {@link Actor}s table.
      *
      * @remarks Destroying Actors from inside a {@link GetPairs} loop will cause the iterable to change size during the process. If you want to loop-and-destroy, please use {@link GetAll}.
+     *
+     * @noSelf
      */
     public static GetPairs<T extends Actor>(): LuaPairsIterable<number, T>;
 
@@ -2171,6 +2179,8 @@ declare class File {
 
     /**
      * Returns when the file was last modified in Unix time
+     *
+     * @noSelf
      */
     public static Time(path: string): number;
 
@@ -2178,26 +2188,36 @@ declare class File {
      * Creates a directory (for every folder passed).
      *
      * @return true if succeeded, false otherwise
+     *
+     * @noSelf
      */
     public static CreateDirectory(path: string): boolean;
 
     /**
      * Deletes a folder or a file
+     *
+     * @noSelf
      */
     public static Remove(path: string): number;
 
     /**
      * Gets if a file or folder exists
+     *
+     * @noSelf
      */
     public static Exists(path: string): boolean;
 
     /**
      * Gets if a path is a directory
+     *
+     * @noSelf
      */
     public static IsDirectory(path: string): boolean;
 
     /**
      * Gets if a path is a file
+     *
+     * @noSelf
      */
     public static IsRegularFile(path: string): boolean;
 
@@ -4500,6 +4520,8 @@ declare class Assets {
 
     /**
      * Returns an array of tables containing information about all loaded Asset Packs
+     *
+     * @noSelf
      */
     public static GetAssetPacks(): ({Name: string, Path: string, Author: string, Version: string})[];
 
@@ -4507,6 +4529,8 @@ declare class Assets {
      * Returns an array of strings containing all Animation Assets Keys from an AssetPack
      *
      * @param asset_pack_path The Asset Pack path to get the assets
+     *
+     * @noSelf
      */
     public static GetAnimations(asset_pack_path: string): AssetsArray;
 
@@ -4514,6 +4538,8 @@ declare class Assets {
      * Returns an array of strings containing all Map Asset Keys from an AssetPack
      *
      * @param asset_pack_path The Asset Pack path to get the assets
+     *
+     * @noSelf
      */
     public static GetMaps(asset_pack_path: string): AssetsArray;
 
@@ -4521,6 +4547,8 @@ declare class Assets {
      * Returns an array of strings containing all Material Assets Keys from an AssetPack
      *
      * @param asset_pack_path The Asset Pack path to get the assets
+     *
+     * @noSelf
      */
     public static GetMaterials(asset_pack_path: string): AssetsArray;
 
@@ -4528,6 +4556,8 @@ declare class Assets {
      * Returns an array of strings containing all Particle Assets Keys from an AssetPack
      *
      * @param asset_pack_path The Asset Pack path to get the assets
+     *
+     * @noSelf
      */
     public static GetParticles(asset_pack_path: string): AssetsArray;
 
@@ -4535,6 +4565,8 @@ declare class Assets {
      * Returns an array of strings containing all Sound Assets Keys from an AssetPack
      *
      * @param asset_pack_path The Asset Pack path to get the assets
+     *
+     * @noSelf
      */
     public static GetSounds(asset_pack_path: string): AssetsArray;
 
@@ -4542,6 +4574,8 @@ declare class Assets {
      * Returns an array of strings containing all Skeletal Mesh Asset Keys from an AssetPack
      *
      * @param asset_pack_path The Asset Pack path to get the assets
+     *
+     * @noSelf
      */
     public static GetSkeletalMeshes(asset_pack_path: string): AssetsArray;
 
@@ -4549,6 +4583,8 @@ declare class Assets {
      * Returns an array of strings containing all Static Mesh Assets Keys from an AssetPack
      *
      * @param asset_pack_path The Asset Pack path to get the assets
+     *
+     * @noSelf
      */
     public static GetStaticMeshes(asset_pack_path: string): AssetsArray;
 
@@ -4556,6 +4592,8 @@ declare class Assets {
      * Returns an array of strings containing all Other Assets Keys from an AssetPack
      *
      * @param asset_pack_path The Asset Pack path to get the assets
+     *
+     * @noSelf
      */
     public static GetOthers(asset_pack_path: string): AssetsArray;
 }
@@ -4572,12 +4610,16 @@ declare class Client {
     /**
      * Calls a Level Blueprint custom event (which can be added when creating levels through Unreal Engine).
      * Parameters can be concatenated to event_name like 'MyEventName 123, "MyParameter2", 456'
+     *
+     * @noSelf
      */
     public static CallLevelBlueprintEvent(event_name: string): void;
 
     /**
      * @param life_time Defaults to 5
      * @param thickness Defaults to 0
+     *
+     * @noSelf
      */
     public static DrawDebugBox(location: Vector, extent: Vector, rotation: Rotator, color: Color, life_time?: number, thickness?: number): void;
 
@@ -4585,6 +4627,8 @@ declare class Client {
      * @param size Defaults to 100
      * @param life_time Defaults to 5
      * @param thickness Defaults to 0
+     *
+     * @noSelf
      */
     public static DrawDebugCoordinateSystem(location: Vector, rotation: Rotator, size?: number, life_time?: number, thickness?: number): void;
 
@@ -4593,6 +4637,8 @@ declare class Client {
      * @param color Defaults to {@link Color.RED}
      * @param life_time Defaults to 5
      * @param thickness Defaults to 0
+     *
+     * @noSelf
      */
     public static DrawDebugCrosshairs(location: Vector, rotation: Rotator, size?: number, color?: Color, life_time?: number, thickness?: number): void;
 
@@ -4601,6 +4647,8 @@ declare class Client {
      * @param color Defaults to {@link Color.RED}
      * @param life_time Defaults to 5
      * @param thickness Defaults to 0
+     *
+     * @noSelf
      */
     public static DrawDebugDirectionalArrow(start_location: Vector, end_location: Vector, arrow_size?: number, color?: Color, life_time?: number, thickness?: number): void;
 
@@ -4608,6 +4656,8 @@ declare class Client {
      * @param color Defaults to {@link Color.RED}
      * @param life_time Defaults to 5
      * @param thickness Defaults to 0
+     *
+     * @noSelf
      */
     public static DrawDebugCylinder(start_location: Vector, end_location: Vector, radius: number, segments: number, color?: Color, life_time?: number, thickness?: number): void;
 
@@ -4616,6 +4666,8 @@ declare class Client {
      * @param life_time Defaults to 5
      * @param draw_shadow Defaults to false
      * @param font_scale Defaults to 1
+     *
+     * @noSelf
      */
     public static DrawDebugString(location: Vector, text: string, color?: Color, life_time?: number, draw_shadow?: boolean, font_scale?: number): void;
 
@@ -4625,6 +4677,8 @@ declare class Client {
      * @param color Defaults to {@link Color.RED}
      * @param life_time Defaults to 5
      * @param thickness Defaults to 0
+     *
+     * @noSelf
      */
     public static DrawDebugLine(start_location: Vector, end_location: Vector, color?: Color, duration?: number, thickness?: number): void;
 
@@ -4634,6 +4688,8 @@ declare class Client {
      * @param color Defaults to {@link Color.RED}
      * @param duration Defaults to 5
      * @param size Defaults to 10
+     *
+     * @noSelf
      */
     public static DrawDebugPoint(start_position: Vector, color?: Color, duration?: number, size?: number): void;
 
@@ -4643,26 +4699,36 @@ declare class Client {
      * @param color Defaults to {@link Color.RED}
      * @param duration Defaults to 5
      * @param thickness Defaults to 0
+     *
+     * @noSelf
      */
     public static DrawDebugSphere(start_position: Vector, radius: number, segments: number, color?: Color, duration?: number, thickness?: number): void;
 
     /**
      * Transforms a 2D screen coordinates into 3D world-space location
+     *
+     * @noSelf
      */
     public static DeprojectScreenToWorld(screen_position: Vector2D): {Position: Vector, Direction: Vector};
 
     /**
      * Transforms a 3D world-space vector into 2D screen coordinates
+     *
+     * @noSelf
      */
     public static ProjectWorldToScreen(world_position: Vector): Vector2D;
 
     /**
      * Initializes the Discord Integration with your custom client_id
+     *
+     * @noSelf
      */
     public static InitializeDiscord(client_id: number): void;
 
     /**
      * Sends a chat message which will display local only
+     *
+     * @noSelf
      */
     public static SendChatMessage(message: string): void;
 
@@ -4676,21 +4742,29 @@ declare class Client {
      * @param alignment Defaults to (1, 0.5)
      * @param justify Defaults to ???
      * @param show_scrollbar Defaults to true
+     *
+     * @noSelf
      */
     public static SetChatConfiguration(screen_location?: Vector2D, size?: Vector2D, anchors_min?: Vector2D, anchors_max?: Vector2D, alignment?: Vector2D, justify?: boolean, show_scrollbar?: boolean): void;
 
     /**
      * Set if the Chat is visible or not
+     *
+     * @noSelf
      */
     public static SetChatVisibility(is_visible: boolean): void;
 
     /**
      * Enables/Disables the default Crosshair
+     *
+     * @noSelf
      */
     public static SetCrosshairEnabled(is_enabled: boolean): void;
 
     /**
      * Enables/Disables the Blood Screen
+     *
+     * @noSelf
      */
     public static SetBloodScreenEnabled(is_enabled: boolean): void;
 
@@ -4700,6 +4774,8 @@ declare class Client {
      * @param intensity Between 0.0 and 1.0
      *
      * @remarks If you want the Blood Screen to do not be overridden, disable it with {@link SetBloodScreenEnabled} with <code>false</code> before
+     *
+     * @noSelf
      */
     public static SetBloodScreenIntensity(intensity: number): void;
 
@@ -4707,36 +4783,50 @@ declare class Client {
      * Loads or sets a hardware cursor from the content directory in the game
      *
      * @param hotspot Defaults to (0, 0)
+     *
+     * @noSelf
      */
     public static SetHardwareCursor(cursor_shape: CursorType, cursor_path: string, hotspot?: Vector2D): void;
 
     /**
      * Communicates with Discord and sets a custom user status
+     *
+     * @noSelf
      */
     public static SetDiscordActivity(state: string, details: string, large_image: string, large_text: string): void;
 
     /**
      * Toggles Local Player input
+     *
+     * @noSelf
      */
     public static SetInputEnabled(enable_input: boolean): void;
 
     /**
      * Displays/Hides Mouse Cursor
+     *
+     * @noSelf
      */
     public static SetMouseEnabled(is_enabled: boolean): void;
 
     /**
      * Changes the Outline Color for interactable stuff. Multiply it by 5 (or more) for having a glowing effect
+     *
+     * @noSelf
      */
     public static SetOutlineColor(color: Color): void;
 
     /**
      * Changes the Highlight Color for highlighted actors at a specific Index. Multiply it by 5 (or more) for having a glowing effect
+     *
+     * @noSelf
      */
     public static SetHighlightColor(highlight_color: Color, index: number, mode: HighlightMode): void;
 
     /**
      * Changes the Steam Rich Presence text
+     *
+     * @noSelf
      */
     public static SetSteamRichPresence(text: string): void;
 
@@ -4744,6 +4834,8 @@ declare class Client {
      * Sets a global value in the Client, which can be accessed from anywhere (client side)
      *
      * @see <a href="https://docs.nanos.world/docs/core-concepts/scripting/entity-values">here</a> for more information
+     *
+     * @noSelf
      */
     public static SetValue(key: string, value: any): void;
 
@@ -4751,6 +4843,8 @@ declare class Client {
      * Subscribes for an {@link ClientEvent}
      *
      * @return The given function callback itself
+     *
+     * @noSelf
      */
     public static Subscribe(event_name: ClientEvent, callback: EventCallback): EventCallback;
 
@@ -4758,6 +4852,8 @@ declare class Client {
      * Unsubscribes from all subscribed Events in this Class and in this Package, optionally passing the function to unsubscribe only that callback
      *
      * @param callback Defaults to null
+     *
+     * @noSelf
      */
     public static Unsubscribe(event_name: ClientEvent, callback?: EventCallback): void;
 
@@ -4774,36 +4870,50 @@ declare class Client {
      * @param draw_debug Defaults to false
      *
      * @remarks The Trace will collide with the ObjectType (in the Collision Settings), even if the channel is ignored below
+     *
+     * @noSelf
      */
     public static Trace(start_location: Vector, end_location: Vector, collision_channel?: CollisionChannel, trace_complex?: boolean, return_entity?: boolean, return_physical_material?: boolean, ignored_actos?: any[], draw_debug?: boolean): void;
 
     /**
      * Gets the local Player
+     *
+     * @noSelf
      */
     public static GetLocalPlayer(): Player;
 
     /**
      * Finds random, reachable point in navigable space restricted to radius around origin (only if map has a NavMesh)
+     *
+     * @noSelf
      */
     public static GetRandomReachablePointInRadius(origin: Vector, radius: number): Vector;
 
     /**
      * Finds random, point in navigable space restricted to Radius around Origin. Resulting location is not tested for reachability from the Origin (only if map has a NavMesh)
+     *
+     * @noSelf
      */
     public static GetRandomPointInNavigableRadius(origin: Vector, radius: number): Vector;
 
     /**
      * Finds a Path given Start and End location (only if map has a NavMesh)
+     *
+     * @noSelf
      */
     public static FindPathToLocation(start_location: Vector, end_location: Vector): ({IsValid: boolean, IsPartial: boolean, Length: number, Cost: number, PathPoints: Vector[]})[];
 
     /**
      * Returns the current Map
+     *
+     * @noSelf
      */
     public static GetMap(): string;
 
     /**
      * Gets the current mouse screen location
+     *
+     * @noSelf
      */
     public static GetMousePosition(): Vector2D;
 
@@ -4811,11 +4921,15 @@ declare class Client {
      * Gets a list of Packages folder names loaded and running in the client
      *
      * @returns {string[]} A string array with packages folder names
+     *
+     * @noSelf
      */
     public static GetPackages(): string[];
 
     /**
      * Gets the size of viewport (how much screen space the game window occupies)
+     *
+     * @noSelf
      */
     public static GetViewportSize(): Vector2D;
 
@@ -4823,6 +4937,8 @@ declare class Client {
      * Gets a value given a key
      *
      * @see <a href="https://docs.nanos.world/docs/core-concepts/scripting/entity-values">here</a> for more information
+     *
+     * @noSelf
      */
     public static GetValue(key: string, fallback: any): any;
 
@@ -4834,21 +4950,29 @@ declare class Client {
      * @param amount_depressed The amount pressed. Defaults to 1
      *
      * @remarks This won't trigger any Scripting event as it bypass internal validations
+     *
+     * @noSelf
      */
     public static InputKey(key_name: string, input_event?: InputEvent, amount_depressed?: number): void;
 
     /**
      * Gets if a key is being pressed
+     *
+     * @noSelf
      */
     public static IsKeyDown(key_name: string): boolean;
 
     /**
      * Gets if the mouse is visible
+     *
+     * @noSelf
      */
     public static IsMouseEnabled(): boolean;
 
     /**
      * Gets if the input is visible
+     *
+     * @noSelf
      */
     public static IsInputEnabled(): boolean;
 }
@@ -5006,6 +5130,8 @@ declare class Events {
      * @param args {@link any[]} Arguments to pass to the event
      *
      * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     *
+     * @noSelf
      */
     public static Call(event_name: string, ...args: any[]): void;
 
@@ -5016,6 +5142,8 @@ declare class Events {
      * @param args {@link any[]} Arguments to pass to the event
      *
      * @remarks <i>Authority</i>: This can be accessed only on <b><u>Client</u></b>.
+     *
+     * @noSelf
      */
     public static CallRemote(event_name: string, ...args: any[]): void;
 
@@ -5027,6 +5155,8 @@ declare class Events {
      * @param args {@link any[]} Arguments to pass to the event
      *
      * @remarks <i>Authority</i>: This can be accessed only on <b><u>Server</u></b>.
+     *
+     * @noSelf
      */
     public static CallRemote(event_name: string, player: Player, ...args: any[]): void;
 
@@ -5037,6 +5167,8 @@ declare class Events {
      * @param args {@link any[]} Arguments to pass to the event
      *
      * @remarks <i>Authority</i>: This can be accessed only on <b><u>Server</u></b>.
+     *
+     * @noSelf
      */
     public static BroadcastRemote(event_name: string, ...args: any[]): void;
 
@@ -5049,6 +5181,8 @@ declare class Events {
      * @return The given function callback itself
      *
      * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     *
+     * @noSelf
      */
     public static Subscribe(event_name: string, callback: EventCallback): EventCallback;
 
@@ -5059,6 +5193,8 @@ declare class Events {
      * @param callback {@link Callback} The callback function to unsubscribe. Defaults to null
      *
      * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     *
+     * @noSelf
      */
     public static Unsubscribe(event_name: string, callback?: EventCallback): void;
 }
@@ -5085,6 +5221,8 @@ declare class HTTP {
      * @param callback {@link HttpCallback} The result will be called in the format. Defaults to null
      *
      * @remarks If a request is still running when unloading packages, the server will freeze until it's finished, then the package will unload.
+     *
+     * @noSelf
      */
     public static Request(uri: string, endpoint?: string, method?: HttpMethod, data?: string, content_type?: string, compress?: boolean, headers?: any, callback?: HttpCallback): void;
 
@@ -5100,6 +5238,8 @@ declare class HTTP {
      * @param content_type {@link string} The <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types">content type</a> of the payload. Defaults to "application/json"
      * @param compress {@link boolean} Whether or not to compress the content with gzip. Defaults to false
      * @param headers {@link any} The <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers">Headers</a> to be used. Defaults to empty object ({})
+     *
+     * @noSelf
      */
     public static RequestSync(uri: string, endpoint?: string, method?: HttpMethod, data?: string, content_type?: string, compress?: boolean, headers?: any): {Status: number, Data: string};
 }
@@ -5122,6 +5262,8 @@ declare class Input {
      * @param binding_name The KeyBinding ID
      * @param input_event Which Event to register (Released/Pressed)
      * @param callback The function to trigger
+     *
+     * @noSelf
      */
     public static Bind(binding_name: string, input_event: InputEvent, callback: () => void): void;
 
@@ -5130,6 +5272,8 @@ declare class Input {
      *
      * @param binding_name The KeyBinding ID
      * @param input_event Which Event to register (Released/Pressed)
+     *
+     * @noSelf
      */
     public static Unbind(binding_name: string, input_event: InputEvent): void;
 
@@ -5137,6 +5281,8 @@ declare class Input {
      * Registers a BindingName to a default Key
      *
      * @param binding_name The KeyBinding ID
+     *
+     * @noSelf
      */
     public static Register(binding_name: string, key_name: string): void;
 
@@ -5144,31 +5290,43 @@ declare class Input {
      * Unregisters a BindingName
      *
      * @param binding_name The KeyBinding ID
+     *
+     * @noSelf
      */
     public static Unregister(binding_name: string, key_name: string): void;
 
     /**
      * Gets the Icon image path from a Key
+     *
+     * @noSelf
      */
     public static GetKeyIcon(key_name: string): string;
 
     /**
      * Gets the Key given a BindingName
+     *
+     * @noSelf
      */
     public static GetMappedKey(binding_name: string): string;
 
     /**
      * Resets all Bound functions from this Package
+     *
+     * @noSelf
      */
     public static ResetBindings(): void;
 
     /**
      * Returns a table with all Scripting KeyBindings
+     *
+     * @noSelf
      */
     public static GetScriptingKeyBindings(): KeyBinding[];
 
     /**
      * Returns a table with all Game KeyBindings
+     *
+     * @noSelf
      */
     public static GetGameKeyBindings(): KeyBinding[];
 }
@@ -5184,21 +5342,29 @@ declare class Package {
 
     /**
      * Calls an exported function from an other Package
+     *
+     * @noSelf
      */
     public static Call(package_name: string, function_name: string, ...args: any[]): any;
 
     /**
      * Logs and formats an error message in the console in Red (the proper and nanos way)
+     *
+     * @noSelf
      */
     public static Error(message: string, ...args: any[]): void;
 
     /**
      * 'exports' a function to be called from any other package
+     *
+     * @noSelf
      */
     public static Export(function_name: string, callback: (...args: any[]) => any): void;
 
     /**
      * Logs and formats a message in the console (the proper and nanos way)
+     *
+     * @noSelf
      */
     public static Log(message: string, ...args: any[]): void;
 
@@ -5211,11 +5377,15 @@ declare class Package {
      * 3. Relative to <code>current-package/Shared/</code>
      * 4. Relative to <code>current-package/</code>
      * 5. Relative to <code>Packages/</code>
+     *
+     * @noSelf
      */
     public static Require(script_file: string): void;
 
     /**
      * Includes other Package in this Package
+     *
+     * @noSelf
      */
     public static RequirePackage(package_name: string): void;
 
@@ -5223,6 +5393,8 @@ declare class Package {
      * Subscribes for an Event
      *
      * @return The given function callback itself
+     *
+     * @noSelf
      */
     public static Subscribe(event_name: PackageEvent, callback: EventCallback): EventCallback;
 
@@ -5230,16 +5402,22 @@ declare class Package {
      * Unsubscribes from all subscribed Events in this Class and in this Package, optionally passing the function to unsubscribe only that callback
      *
      * @param callback Defaults to null
+     *
+     * @noSelf
      */
     public static Unsubscribe(event_name: PackageEvent, callback?: EventCallback): void;
 
     /**
      * Logs and formats a warning message in the console in Orange (the proper and nanos way)
+     *
+     * @noSelf
      */
     public static Warn(message: string, ...args: any[]): void;
 
     /**
      * Sets a Persistent Value which will be saved to Disk
+     *
+     * @noSelf
      */
     public static SetPersistentData(key: string, value: any): void;
 
@@ -5247,6 +5425,8 @@ declare class Package {
      * Gets a list of all directories in this package, optionally with filters
      *
      * @param path_filter Defaults to an empty string ("")
+     *
+     * @noSelf
      */
     public static GetDirectories(path_filter?: string): string|any[];
 
@@ -5255,26 +5435,36 @@ declare class Package {
      *
      * @param path_filter Defaults to an empty string ("")
      * @param extension_filter Defaults to an empty string ("")
+     *
+     * @noSelf
      */
     public static GetFiles(path_filter?: string, extension_filter?: string): string|any[];
 
     /**
      * Gives the package name
+     *
+     * @noSelf
      */
     public static GetName(): string;
 
     /**
      * Gives the package path
+     *
+     * @noSelf
      */
     public static GetPath(): string;
 
     /**
      * Gets the package version
+     *
+     * @noSelf
      */
     public static GetVersion(): string;
 
     /**
      * Gets all Persistent Values from the Disk
+     *
+     * @noSelf
      */
     public static GetPersistentData(key: string): {[key: string]: any}|any;
 }
@@ -5305,21 +5495,29 @@ declare class Server {
 
     /**
      * Sends a chat message to everyone
+     *
+     * @noSelf
      */
     public static BroadcastChatMessage(message: string): void;
 
     /**
      * Restarts the server in a new Map, restarts all packages and reconnects all players
+     *
+     * @noSelf
      */
     public static ChangeMap(map_path: string): void;
 
     /**
      * Reloads a Package
+     *
+     * @noSelf
      */
     public static ReloadPackage(package_folder_name: string): void;
 
     /**
      * Sends a chat message to {@link Player} only
+     *
+     * @noSelf
      */
     public static SendChatMessage(player: Player, message: string): void;
 
@@ -5327,6 +5525,8 @@ declare class Server {
      * Sets the description of the server, optionally overrides Config.toml
      *
      * @param persist_to_config_file Defaults to false
+     *
+     * @noSelf
      */
     public static SetDescription(description: string, persist_to_config_file?: boolean): void;
 
@@ -5334,6 +5534,8 @@ declare class Server {
      * Sets the logo of the server, optionally overrides Config.toml
      *
      * @param persist_to_config_file Defaults to false
+     *
+     * @noSelf
      */
     public static SetLogo(log_url: string, persist_to_config_file?: boolean): void;
 
@@ -5341,6 +5543,8 @@ declare class Server {
      * Sets the maximum player slots of the server, optionally overrides Config.toml
      *
      * @param persist_to_config_file Defaults to false
+     *
+     * @noSelf
      */
     public static SetMaxPlayers(max_players: number, persist_to_config_file?: boolean): void;
 
@@ -5348,6 +5552,8 @@ declare class Server {
      * Sets the name of the server, optionally overrides Config.toml
      *
      * @param persist_to_config_file Defaults to false
+     *
+     * @noSelf
      */
     public static SetName(name: string, persist_to_config_file?: boolean): void;
 
@@ -5355,6 +5561,8 @@ declare class Server {
      * Sets the password of the server, optionally overrides Config.toml
      *
      * @param persist_to_config_file Defaults to false
+     *
+     * @noSelf
      */
     public static SetPassword(name: string, persist_to_config_file?: boolean): void;
 
@@ -5362,6 +5570,8 @@ declare class Server {
      * Sets a global value in the Server, which can be accessed from anywhere (server side)
      *
      * @see <a href="https://docs.nanos.world/docs/core-concepts/scripting/entity-values">here</a> for more information
+     *
+     * @noSelf
      */
     public static SetValue(key: string, value: any): void;
 
@@ -5369,11 +5579,15 @@ declare class Server {
      * Gets a value given a key
      *
      * @see <a href="https://docs.nanos.world/docs/core-concepts/scripting/entity-values">here</a> for more information
+     *
+     * @noSelf
      */
     public static GetValue(key: string): any;
 
     /**
      * Stops the server
+     *
+     * @noSelf
      */
     public static Stop(): void;
 
@@ -5381,6 +5595,8 @@ declare class Server {
      * Subscribes for an Event
      *
      * @return The given function callback itself
+     *
+     * @noSelf
      */
     public static Subscribe(event_name: ServerEvent, callback: EventCallback): EventCallback;
 
@@ -5388,21 +5604,29 @@ declare class Server {
      * Unsubscribes from all subscribed Events in this Class and in this Package, optionally passing the function to unsubscribe only that callback
      *
      * @param callback Defaults to null
+     *
+     * @noSelf
      */
     public static Unsubscribe(event_name: ServerEvent, callback?: EventCallback): void;
 
     /**
      * Unloads a Package
+     *
+     * @noSelf
      */
     public static UnloadPackage(package_folder_name: string): void;
 
     /**
      * Returns the current Map
+     *
+     * @noSelf
      */
     public static GetMap(): string;
 
     /**
      * Returns a list of the Custom Config of the current map (stored in the MAP_NAME.toml)
+     *
+     * @noSelf
      */
     public static GetMapConfig(): ({[key: string]: any})[];
 
@@ -5410,6 +5634,8 @@ declare class Server {
      * Returns a list of all Maps installed on the server
      *
      * @param only_loaded Defaults to true
+     *
+     * @noSelf
      */
     public static GetMaps(only_loaded?: boolean): ({key: string, author: string, compatible_game_modes: any[]})[];
 
@@ -5417,46 +5643,64 @@ declare class Server {
      * Returns a list of Packages folder names available in the server, optionally returns only loaded and running packages
      *
      * @param only_loaded Defaults to true
+     *
+     * @noSelf
      */
     public static GetPackages(only_loaded?: boolean): string[];
 
     /**
      * Gets the server Version
+     *
+     * @noSelf
      */
     public static GetVersion(): string;
 
     /**
      * Gets the server IP
+     *
+     * @noSelf
      */
     public static GetIP(): string;
 
     /**
      * Gets the server Port
+     *
+     * @noSelf
      */
     public static GetPort(): number;
 
     /**
      * Gets the server QueryPort
+     *
+     * @noSelf
      */
     public static GetQueryPort(): number;
 
     /**
      * Gets the server Max Players allowed
+     *
+     * @noSelf
      */
     public static GetMaxPlayers(): number;
 
     /**
      * Gets the server Description
+     *
+     * @noSelf
      */
     public static GetDescription(): string;
 
     /**
      * Gets the configured Tick Rate
+     *
+     * @noSelf
      */
     public static GetTickRate(): number;
 
     /**
      * Gets if the server is announced in the Master List
+     *
+     * @noSelf
      */
     public static IsAnnounced(): number;
 }
@@ -5532,6 +5776,8 @@ declare class Timer {
      * @param args {@link any[]} Additional parameters to pass to the function
      *
      * @returns The timeout_id
+     *
+     * @noSelf
      */
     public static SetTimeout(callback: EventCallback, milliseconds?: number, ...args: any[]): number;
 
@@ -5543,6 +5789,8 @@ declare class Timer {
      * @param args {@link any[]} Additional parameters to pass to the function
      *
      * @returns The interval_id
+     *
+     * @noSelf
      */
     public static SetInterval(callback: EventCallback, milliseconds?: number, ...args: any[]): number;
 
@@ -5550,6 +5798,8 @@ declare class Timer {
      * Stops the execution of the function specified in {@link SetTimeout}
      *
      * @param timeout_id {@link number} The ID value returned by {@link SetTimeout} is used as the parameter for this method
+     *
+     * @noSelf
      */
     public static ClearTimeout(timeout_id: number): void;
 
@@ -5557,6 +5807,8 @@ declare class Timer {
      * Stops the execution of the function specified in {@link SetInterval}
      *
      * @param interval_id {@link number} The ID value returned by {@link SetInterval} is used as the parameter for this method
+     *
+     * @noSelf
      */
     public static ClearInterval(interval_id: number): void;
 
@@ -5565,6 +5817,8 @@ declare class Timer {
      *
      * @param timer_id {@link number} The Timer ID
      * @param actor {@link Actor} {@link Actor} to be bound
+     *
+     * @noSelf
      */
     public static Bind(timer_id: number, actor: Actor): void;
 
@@ -5572,6 +5826,8 @@ declare class Timer {
      * Checks if a Timer is currently active or waiting to be triggered
      *
      * @param timer_id {@link number} The Timer ID
+     *
+     * @noSelf
      */
     public static IsValid(timer_id: number): boolean;
 
@@ -5579,6 +5835,8 @@ declare class Timer {
      * Returns the time elapsed since the last tick
      *
      * @param timer_id {@link number} The Timer ID
+     *
+     * @noSelf
      */
     public static GetElapsedTime(timer_id: number): number;
 
@@ -5586,6 +5844,8 @@ declare class Timer {
      * Returns the time remaining to the next tick
      *
      * @param timer_id {@link number} The Timer ID
+     *
+     * @noSelf
      */
     public static GetRemainingTime(timer_id: number): number;
 
@@ -5593,6 +5853,8 @@ declare class Timer {
      * Pauses the Timer
      *
      * @param timer_id {@link number} The Timer ID
+     *
+     * @noSelf
      */
     public static Pause(timer_id: number): void;
 
@@ -5600,6 +5862,8 @@ declare class Timer {
      * Resumes the Timer
      *
      * @param timer_id {@link number} The Timer ID
+     *
+     * @noSelf
      */
     public static Resume(timer_id: number): void;
 }
@@ -5617,6 +5881,8 @@ declare class World {
      * Loads a Level in runtime
      *
      * @param should_block_on_load {@link boolean} If this should be a blocking operation - the game will freeze. Defaults to false
+     *
+     * @noSelf
      */
     public static LoadStreamLevel(level_name: string, should_block_on_load?: boolean): void;
 
@@ -5624,26 +5890,51 @@ declare class World {
      * Unloads a Level in runtime
      *
      * @param should_block_on_unload {@link boolean} If this should be a blocking operation - the game will freeze. Defaults to false
+     *
+     * @noSelf
      */
     public static UnloadStreamLevel(level_name: string, should_block_on_unload?: boolean): void;
 
     /**
      * @param second_density Defaults to 0
+     *
+     * @noSelf
      */
     public static SetFogDensity(density: number, second_density?: number): void;
 
+    /**
+     * @noSelf
+     */
     public static SetFogHeightFalloff(falloff: number): void;
 
+    /**
+     * @noSelf
+     */
     public static SetFogHeightOffset(offset: number): void;
 
+    /**
+     * @noSelf
+     */
     public static SetSunLightColor(color: Color): void;
 
+    /**
+     * @noSelf
+     */
     public static SetSkyLightIntensity(intensity: number): void;
 
+    /**
+     * @noSelf
+     */
     public static SetSkyRayleighScattering(color: Color): void;
 
+    /**
+     * @noSelf
+     */
     public static SetSunLightIntensity(intensity: number): void;
 
+    /**
+     * @noSelf
+     */
     public static SetSunTemperatureMultiplier(multiplier: number): void;
 
     /**
@@ -5651,6 +5942,8 @@ declare class World {
      *
      * @param intensity Defaults to 0.675
      * @param threshold Defaults to -1
+     *
+     * @noSelf
      */
     public static SetPPBloom(intensity?: number, threshold?: number): void;
 
@@ -5659,6 +5952,8 @@ declare class World {
      *
      * @param intensity Defaults to 0
      * @param start_offset Defaults to 0
+     *
+     * @noSelf
      */
     public static SetPPChromaticAberration(intensity?: number, start_offset?: number): void;
 
@@ -5668,6 +5963,8 @@ declare class World {
      * @param vignette_intensity Defaults to 0.6
      * @param grain_jitter Defaults to 0
      * @param grain_intensity Defaults to 0
+     *
+     * @noSelf
      */
     public static SetPPImageEffects(vignette_intensity?: number, grain_jitter?: number, grain_intensity?: number): void;
 
@@ -5679,11 +5976,15 @@ declare class World {
      * @param shoulder Defaults to 0.26
      * @param black_clip Defaults to 0
      * @param white_clip Defaults to 0.3
+     *
+     * @noSelf
      */
     public static SetPPFilm(slope?: number, toe?: number, shoulder?: number, black_clip?: number, white_clip?: number): void;
 
     /**
      * Set Post Process Saturation Colors. Use Alpha for overall Saturation intensity
+     *
+     * @noSelf
      */
     public static SetPPGlobalSaturation(color: Color): void;
 
@@ -5691,52 +5992,83 @@ declare class World {
      * Sets a PostProcess Material
      *
      * @param material_path The Material Asset to set as Post Process
+     *
+     * @noSelf
      */
     public static SetPPMaterial(material_path: string): void;
 
     /**
      * Removes the current Post Process Material
+     *
+     * @noSelf
      */
     public static RemovePPMaterial(): void;
 
     /**
      * Sets the sun's angle (0-360)
+     *
+     * @noSelf
      */
     public static SetSunAngle(angle: number): void;
 
     /**
      * Sets the sun's time speed (default: '60', which means 60 seconds in game = 1 second in real world)
+     *
+     * @noSelf
      */
     public static SetSunSpeed(speed: number): void;
 
     /**
      * Sets the Global time of the day
+     *
+     * @noSelf
      */
     public static SetTime(hours: number, minutes: number): void;
 
     /**
      * Sets the global Predefined Weather ({@link WeatherType})
+     *
+     * @noSelf
      */
     public static SetWeather(weather: WeatherType): void;
 
     /**
      * Overrides all Light/Sun Actors with the NanosWorld's Official one, to be able to use the functions from this page
+     *
+     * @noSelf
      */
     public static SpawnDefaultSun(): void;
 
     /**
      * Sets the global Wind intensity
+     *
+     * @noSelf
      */
     public static SetWind(intensity: number): void;
 
+    /**
+     * @noSelf
+     */
     public static GetSunAngle(): number;
 
+    /**
+     * @noSelf
+     */
     public static GetSunSpeed(): number;
 
+    /**
+     * @noSelf
+     */
     public static GetTime(): {hours: number, minutes: number};
 
+    /**
+     * @noSelf
+     */
     public static GetWeather(): WeatherType;
 
+    /**
+     * @noSelf
+     */
     public static GetWind(): number;
 }
 
@@ -5785,36 +6117,50 @@ declare class Color {
 
     /**
      * Returns a random color from Color Palette
+     *
+     * @noSelf
      */
     public static RandomPalette(): Color;
 
     /**
      * Returns a random color from all color scope
+     *
+     * @noSelf
      */
     public static Random(): Color;
 
     /**
      * Returns the color from 0-255 range values
+     *
+     * @noSelf
      */
     public static FromRGBA(r: number, g: number, b: number, a?: number): Color;
 
     /**
      * Returns a color from the CYMK format
+     *
+     * @noSelf
      */
     public static FromCYMK(c: number, y: number, m: number, k: number): Color;
 
     /**
      * Returns a color from the HSV format
+     *
+     * @noSelf
      */
     public static FromHSL(h: number, s: number, l: number): Color;
 
     /**
      * Returns a color from the HSLA format
+     *
+     * @noSelf
      */
     public static FromHSV(h: number, s: number, v: number): Color;
 
     /**
      * Returns a color from the Hexadecimal format
+     *
+     * @noSelf
      */
     public static FromHEX(hex: string): Color;
 
@@ -5844,46 +6190,64 @@ declare class NanosMath {
 
     /**
      * Rounds a number
+     *
+     * @noSelf
      */
     public static Round(value: number): number;
 
     /**
      * Clamps a number
+     *
+     * @noSelf
      */
     public static Clamp(value: number, min: number, max: number): number;
 
     /**
      * Clamps an angle to the range of [0, 360].
+     *
+     * @noSelf
      */
     public static ClampAxis(value: number): number;
 
     /**
      * Clamps an angle to the range of [-180, 180].
+     *
+     * @noSelf
      */
     public static NormalizeAxis(value: number): number;
 
     /**
      * Interpolate scalar from Current to Target
+     *
+     * @noSelf
      */
     public static FInterpTo(current: number, target: number, delta_time: number, interp_speed: number): number;
 
     /**
      * Interpolate Rotator from Current to Target
+     *
+     * @noSelf
      */
     public static RInterpTo(current: Rotator, target: Rotator, delta_time: number, interp_speed: number): Rotator;
 
     /**
      * Interpolate Rotator from Current to Target with a constant step
+     *
+     * @noSelf
      */
     public static RInterpConstantTo(current: Rotator, target: Rotator, delta_time: number, interp_speed: number): Rotator;
 
     /**
      * Interpolate Vector from Current to Target
+     *
+     * @noSelf
      */
     public static VInterpTo(current: Vector, target: Vector, delta_time: number, interp_speed: number): Vector;
 
     /**
      * Interpolate Vector from Current to Target with a constant step
+     *
+     * @noSelf
      */
     public static VInterpConstantTo(current: Vector, target: Vector, delta_time: number, interp_speed: number): Vector;
 }
@@ -5899,6 +6263,8 @@ declare class NanosUtils {
      * Dumps a table into a readable text
      *
      * @param table Table to dump
+     *
+     * @noSelf
      */
     public static Dump(table: LuaTable): string;
 
@@ -5909,6 +6275,8 @@ declare class NanosUtils {
      * @param amount Amount of times to loop
      * @param callback The function to call
      * @param args The arguments of the function to call
+     *
+     * @noSelf
      */
     public static Benchmark(name: string, amount: number, callback: (...args: any[]) => void, ...args: any[]): void;
 }
@@ -6031,6 +6399,8 @@ declare class Rotator {
 
     /**
      * Generates a random rotation, with optional random roll
+     *
+     * @noSelf
      */
     public static Random(roll?: number): Rotator;
 }
