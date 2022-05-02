@@ -6135,6 +6135,8 @@ type StreamLevelUnloaded = "StreamLevelUnloaded";
  * A color composed of components (R, G, B, A) with floating point precision.
  *
  * @remarks This structure is Open Sourced at <a href="https://github.com/nanos-world/nanos-world-lua-lib">this link</a>. Feel free to push merge requests and suggest changes!
+ *
+ * @customConstructor Color
  */
 declare class Color {
 
@@ -6327,6 +6329,8 @@ declare class NanosUtils {
  * Floating point Quaternion that can represent a rotation about an axis in 3-D space
  *
  * @remarks This structure is Open Sourced at <a href="https://github.com/nanos-world/nanos-world-lua-lib">this link</a>. Feel free to push merge requests and suggest changes!
+ *
+ * @customConstructor Quat
  */
 declare class Quat {
 
@@ -6371,6 +6375,8 @@ declare const mulQuat: LuaMultiplication<Quat, Quat, Quat>;
  *
  * Rotators are internally and automatically compressed, which reduces it's size in the network up to 90%.
  * Their components are usually compressed into 1 byte each (with some exceptions which we need more precision).
+ *
+ * @customConstructor Rotator
  */
 declare class Rotator {
 
@@ -6459,6 +6465,8 @@ declare const mulRotator: LuaMultiplication<Rotator, Rotator, Rotator>;
  * Vectors are internally and automatically compressed, which reduces it's size in the network up to 90%. Some cool details:
  * - Vectors parameters in Classes Methods are usually compressed with precision of 1 decimal place (with some exceptions which we need more precision).
  * - Vectors passed in Remote Events are compressed with precision of 2 decimal places. If you need more precision, we recommend passing them as raw number instead.
+ *
+ * @customConstructor Vector
  */
 declare class Vector {
 
@@ -6543,6 +6551,8 @@ declare const powVector: LuaPower<Vector, Vector, Vector>;
  * A Vector2D composed of components (X, Y) with floating point precision. Used mainly for HUD and Drawing on screen
  *
  * @remarks This structure is Open Sourced at <a href="https://github.com/nanos-world/nanos-world-lua-lib">this link</a>. Feel free to push merge requests and suggest changes!
+ *
+ * @customConstructor Vector2D
  */
 declare class Vector2D {
 
