@@ -722,6 +722,8 @@ type PickableEvent_ReleaseUse = "ReleaseUse";
  * A Billboard is a 2D Material that will be rendered always facing the camera.
  *
  * @remarks <i>Authority</i>: This can be spawned only on the <b><u>Client</u></b>.
+ *
+ * @customConstructor Billboard
  */
 declare class Billboard extends Paintable {
 
@@ -744,6 +746,8 @@ declare class Billboard extends Paintable {
  * <i>Note:</i> Currently it is only possible to communicate in one-way with the Blueprint (Scripting -> Blueprint). We didn't find a way to have the inverse communication hopefully yet.
  *
  * @remarks <i>Authority</i>: This can be spawned on both <b><u>Client</u></b> and <b><u>Server</u></b>. (if you spawn it on client, it won't be synchronized with other players).
+ *
+ * @customConstructor Blueprint
  */
 declare class Blueprint extends Paintable {
 
@@ -781,6 +785,8 @@ declare class Blueprint extends Paintable {
  * <i>Tip:</i> You can find more useful information regarding physical properties of the joint in the end of this page.
  *
  * @remarks <i>Authority</i>: This can be spawned only on the <b><u>Server</u></b>.
+ *
+ * @customConstructor Cable
  */
 declare class Cable extends Paintable {
 
@@ -905,6 +911,8 @@ declare class Cable extends Paintable {
  * Canvas is an entity which you can draw onto it.
  *
  * @remarks <i>Authority</i>: This can be spawned only on the <b><u>Client</u></b>.
+ *
+ * @customConstructor Canvas
  */
 declare class Canvas {
 
@@ -1056,6 +1064,8 @@ type CanvasEvent_Update = "Update";
  * <i>Note:</i> Characters are Skeletal Meshes using Unreal’s Mannequin Skeletal, with animations and interactivity already natively integrated into nanos world. It is possible to import any Skeletal Mesh (which uses Unreal’s Mannequin Skeletal) to this Character.
  *
  * @remarks <i>Authority</i>: This can be spawned only on the <b><u>Server</u></b>.
+ *
+ * @customConstructor Character
  */
 declare class Character extends Paintable {
 
@@ -2093,6 +2103,8 @@ type CharacterEvent_WeaponAimModeChanged = "WeaponAimModeChanged";
  * <i>Tip:</i> Currently nanos world supports {@link DatabaseEngine.SQLite}, {@link DatabaseEngine.MySQL} and {@link DatabaseEngine.PostgreSQL} out of the box
  *
  * @remarks <i>Authority</i>: This can be spawned only on the <b><u>Server</u></b>.
+ *
+ * @customConstructor Database
  */
 declare class Database {
 
@@ -2148,6 +2160,8 @@ declare class Database {
  * Decals are Materials that are projected onto meshes in your level, including Static Meshes and Skeletal Meshes.
  *
  * @remarks <i>Authority</i>: This can be spawned only on the <b><u>Client</u></b>.
+ *
+ * @customConstructor Decal
  */
 declare class Decal extends Paintable {
 
@@ -2168,6 +2182,8 @@ declare class Decal extends Paintable {
  * <i>Info:</i> It is not possible to open files from outside the server folder. All path must be relative to the Server’s executable folder. All files are opened as binary file by default.
  *
  * @remarks <i>Authority</i>: This can be spawned only on the <b><u>Server</u></b>.
+ *
+ * @customConstructor File
  */
 declare class File {
 
@@ -2311,6 +2327,8 @@ declare class File {
  * *This "Particle" is just a special identifier which can only be used on Grenades!
  *
  * @remarks <i>Authority</i>: This can be spawned only on the <b><u>Server</u></b>.
+ *
+ * @customConstructor Grenade
  */
 declare class Grenade extends Pickable {
 
@@ -2450,6 +2468,8 @@ type GrenadeEvent_Throw = "Throw";
  * nanos world provides 3 types of lights: {@link LightType.Spot}, {@link LightType.Point} and {@link LightType.React}. All lights are Dynamic and because of that, very expensive! Keep that in mind before spawning 1000 lights.
  *
  * @remarks <i>Authority</i>: This can be spawned on both <b><u>Client</u></b> and <b><u>Server</u></b>. (if you spawn it on client, it won't be synchronized with other players).
+ *
+ * @customConstructor Light
  */
 declare class Light extends Actor {
 
@@ -2512,6 +2532,8 @@ declare class Light extends Actor {
  * A Melee represents an Entity which can be Pickable by a Character and can be used to melee attack, Charactes can hold it with hands with pre-defined handling modes.
  *
  * @remarks <i>Authority</i>: This can be spawned only on the <b><u>Server</u></b>.
+ *
+ * @customConstructor Melee
  */
 declare class Melee extends Pickable {
 
@@ -2603,6 +2625,8 @@ declare class Melee extends Pickable {
  * Particle Entity.
  *
  * @remarks <i>Authority</i>: This can be spawned on both <b><u>Client</u></b> and <b><u>Server</u></b>. (if you spawn it on client, it won't be synchronized with other players).
+ *
+ * @customConstructor Particle
  */
 declare class Particle extends Actor {
 
@@ -3074,6 +3098,8 @@ type PlayerEvent_VOIP = "VOIP";
  * <i>Note:</i> Setting {@link CollisionType.Auto} on Props will make them automatically switch between {@link CollisionType.Normal} and {@link CollisionType.IgnoreOnlyPawn} if they are smaller than radius 40 units.
  *
  * @remarks <i>Authority</i>: This can be spawned on both <b><u>Client</u></b> and <b><u>Server</u></b>. (if you spawn it on client, it won't be synchronized with other players).
+ *
+ * @customConstructor Prop
  */
 declare class Prop extends Paintable {
 
@@ -3203,6 +3229,8 @@ type PropEvent_UnGrab = "UnGrab";
  * We've worked hard to make SceneCapture as performatic as possible! Some techniques were applied for optimization and reducing the render_rate automatically when you are far and when the generated texture is out of the screen.
  *
  * @remarks <i>Authority</i>: This can be spawned only on the <b><u>Client</u></b>.
+ *
+ * @customConstructor SceneCapture
  */
 declare class SceneCapture extends Actor {
 
@@ -3248,6 +3276,8 @@ declare class SceneCapture extends Actor {
  * <i>Tip:</i> You can also load raw .ogg files from disk! Please check <a href="https://docs.nanos.world/docs/scripting-reference/glossary/basic-types#specialpath">SpecialPath</a>.
  *
  * @remarks <i>Authority</i>: This can be spawned only on the <b><u>Client</u></b>.
+ *
+ * @customConstructor Sound
  */
 declare class Sound extends Actor {
 
@@ -3370,6 +3400,8 @@ declare class Sound extends Actor {
  * <i>Tip:</i> Automatically all StaticMeshActors present in the Level will be loaded as a StaticMesh entity in the client side.
  *
  * @remarks <i>Authority</i>: This can be spawned on both <b><u>Client</u></b> and <b><u>Server</u></b>. (if you spawn it on client, it won't be synchronized with other players).
+ *
+ * @customConstructor StaticMesh
  */
 declare class StaticMesh extends Paintable {
 
@@ -3439,6 +3471,8 @@ type StaticMesh_TakeDamage = "TakeDamage";
  * You can also tweak it’s color and other properties using the Material methods.
  *
  * @remarks <i>Authority</i>: This can be spawned on both <b><u>Client</u></b> and <b><u>Server</u></b>. (if you spawn it on client, it won't be synchronized with other players).
+ *
+ * @customConstructor TextRender
  */
 declare class TextRender extends Paintable {
 
@@ -3509,6 +3543,8 @@ declare class TextRender extends Paintable {
  * A Trigger class is a utility class to trigger events when any Entity enters an Area.
  *
  * @remarks <i>Authority</i>: This can be spawned only on the <b><u>Server</u></b>.
+ *
+ * @customConstructor Trigger
  */
 declare class Trigger extends Actor {
 
@@ -3585,6 +3621,8 @@ type TriggerEvent_EndOverlap = "EndOverlap";
  * <i>Tip:</i> Please take a look at our Default’s Vehicle package with all built-in Vehicles already properly configured and ready to use: <a href="https://github.com/nanos-world/nanos-world-vehicles">here</a>
  *
  * @remarks <i>Authority</i>: This can be spawned only on the <b><u>Server</u></b>.
+ *
+ * @customConstructor Vehicle
  */
 declare class Vehicle extends Paintable {
 
@@ -3897,6 +3935,8 @@ type VehicleEvent_CharacterAttemptLeave = "CharacterAttemptLeave";
  * <i>Info:</i> Please take a look at our Default’s Weapon package with all built-in Weapons already properly configured and ready to use: <a href="https://github.com/nanos-world/nanos-world-weapons">here</a>
  *
  * @remarks <i>Authority</i>: This can be spawned only on the <b><u>Server</u></b>.
+ *
+ * @customConstructor Weapon
  */
 declare class Weapon extends Pickable {
 
@@ -4400,6 +4440,8 @@ type WeaponEvent_AmmoBagChanged = "AmmoBagChanged";
  * <i><b>Caution:</b></i> We are using a beta build of Ultralight, which now supports Audio and Video. Although it is still very unstable and some crashes may happen! Also the Audio currently plays only in 2D.
  *
  * @remarks <i>Authority</i>: This can be spawned only on the <b><u>Client</u></b>.
+ *
+ * @customConstructor WebUI
  */
 declare class WebUI {
 

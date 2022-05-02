@@ -1,6 +1,6 @@
 {
   "name": "nanos-world-types",
-  "version": "160.1.4",
+  "version": "160.1.5",
   "description": "TypeScript Definitions for the nanos world API which can be used with TypeScriptToLua.",
   "types": "./index.d.ts",
   "repository": {
