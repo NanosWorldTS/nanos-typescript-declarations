@@ -395,8 +395,10 @@ declare abstract class Actor {
      * @return The given function callback itself
      *
      * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     *
+     * @noSelf
      */
-    public Subscribe(event_name: ActorEvent, callback: EventCallback): EventCallback;
+    public static Subscribe(event_name: ActorEvent, callback: EventCallback): EventCallback;
 
     /**
      * Unsubscribes all callbacks from this Event in this Actor within this Package, optionally passing the function to unsubscribe only that callback
@@ -404,8 +406,10 @@ declare abstract class Actor {
      * @param callback Defaults to null
      *
      * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     *
+     * @noSelf
      */
-    public Unsubscribe(event_name: ActorEvent, callback?: EventCallback): void;
+    public static Unsubscribe(event_name: ActorEvent, callback?: EventCallback): void;
 }
 
 type ActorEvent = string | ActorEvent_Destroy | ActorEvent_Spawn | ActorEvent_ValueChange;
@@ -657,8 +661,21 @@ declare abstract class Pickable extends Paintable {
      * @return The given function callback itself
      *
      * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     *
+     * @noSelf
      */
-    public Subscribe(event_name: PickableEvent, callback: EventCallback): EventCallback;
+    public static Subscribe(event_name: PickableEvent, callback: EventCallback): EventCallback;
+
+    /**
+     * Unsubscribes all callbacks from this Event in this Actor within this Package, optionally passing the function to unsubscribe only that callback
+     *
+     * @param callback Defaults to null
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     *
+     * @noSelf
+     */
+    public static Unsubscribe(event_name: PickableEvent, callback?: EventCallback): void;
 }
 
 type PickableEvent = ActorEvent | PickableEvent_Drop | PickableEvent_Hit | PickableEvent_Interact
@@ -1033,8 +1050,10 @@ declare class Canvas {
      * @return The given function callback itself
      *
      * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     *
+     * @noSelf
      */
-    public Subscribe(event_name: CanvasEvent, callback: EventCallback): EventCallback;
+    public static Subscribe(event_name: CanvasEvent, callback: EventCallback): EventCallback;
 
     /**
      * Unsubscribes all callbacks from this Event in this Actor within this Package, optionally passing the function to unsubscribe only that callback
@@ -1042,8 +1061,10 @@ declare class Canvas {
      * @param callback Defaults to null
      *
      * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     *
+     * @noSelf
      */
-    public Unsubscribe(event_name: CanvasEvent, callback?: EventCallback): void;
+    public static Unsubscribe(event_name: CanvasEvent, callback?: EventCallback): void;
 }
 
 type CanvasEvent = ActorEvent | CanvasEvent_Update;
@@ -1819,8 +1840,10 @@ declare class Character extends Paintable {
      * Subscribes for an {@link CharacterEvent}
      *
      * @return The given function callback itself
+     *
+     * @noSelf
      */
-    public Subscribe(event_name: CharacterEvent, callback: EventCallback): EventCallback;
+    public static Subscribe(event_name: CharacterEvent, callback: EventCallback): EventCallback;
 
     /**
      * Unsubscribes all callbacks from this Event in this Actor within this Package, optionally passing the function to unsubscribe only that callback
@@ -1828,8 +1851,10 @@ declare class Character extends Paintable {
      * @param callback Defaults to null
      *
      * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     *
+     * @noSelf
      */
-    public Unsubscribe(event_name: CharacterEvent, callback?: EventCallback): void;
+    public static Unsubscribe(event_name: CharacterEvent, callback?: EventCallback): void;
 }
 
 type CharacterEvent = ActorEvent | CharacterEvent_AnimationBeginNotify | CharacterEvent_AnimationEndNotify
@@ -2432,8 +2457,10 @@ declare class Grenade extends Pickable {
      * Subscribes for an {@link GrenadeEvent}
      *
      * @return The given function callback itself
+     *
+     * @noSelf
      */
-    public Subscribe(event_name: GrenadeEvent, callback: EventCallback): EventCallback;
+    public static Subscribe(event_name: GrenadeEvent, callback: EventCallback): EventCallback;
 
     /**
      * Unsubscribes all callbacks from this Event in this Actor within this Package, optionally passing the function to unsubscribe only that callback
@@ -2441,8 +2468,10 @@ declare class Grenade extends Pickable {
      * @param callback Defaults to null
      *
      * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     *
+     * @noSelf
      */
-    public Unsubscribe(event_name: GrenadeEvent, callback?: EventCallback): void;
+    public static Unsubscribe(event_name: GrenadeEvent, callback?: EventCallback): void;
 }
 
 type GrenadeEvent = ActorEvent | GrenadeEvent_Explode | GrenadeEvent_Throw;
@@ -3027,8 +3056,10 @@ declare abstract class Player {
      * @return The given function callback itself
      *
      * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     *
+     * @noSelf
      */
-    public Subscribe(event_name: PlayerEvent, callback: EventCallback): EventCallback;
+    public static Subscribe(event_name: PlayerEvent, callback: EventCallback): EventCallback;
 
     /**
      * Unsubscribes all callbacks from this Event in this Actor within this Package, optionally passing the function to unsubscribe only that callback
@@ -3036,8 +3067,10 @@ declare abstract class Player {
      * @param callback Defaults to null
      *
      * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     *
+     * @noSelf
      */
-    public Unsubscribe(event_name: PlayerEvent, callback?: EventCallback): void;
+    public static Unsubscribe(event_name: PlayerEvent, callback?: EventCallback): void;
 }
 
 type PlayerEvent = string | PlayerEvent_Destroy | PlayerEvent_Possess | PlayerEvent_Spawn | PlayerEvent_Ready
@@ -3157,8 +3190,10 @@ declare class Prop extends Paintable {
      * Subscribes for an {@link PropEvent}
      *
      * @return The given function callback itself
+     *
+     * @noSelf
      */
-    public Subscribe(event_name: PropEvent, callback: EventCallback): EventCallback;
+    public static Subscribe(event_name: PropEvent, callback: EventCallback): EventCallback;
 
     /**
      * Unsubscribes all callbacks from this Event in this Actor within this Package, optionally passing the function to unsubscribe only that callback
@@ -3166,8 +3201,10 @@ declare class Prop extends Paintable {
      * @param callback Defaults to null
      *
      * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     *
+     * @noSelf
      */
-    public Unsubscribe(event_name: PropEvent, callback?: EventCallback): void;
+    public static Unsubscribe(event_name: PropEvent, callback?: EventCallback): void;
 }
 
 type PropEvent = ActorEvent | PropEvent_Grab | PropEvent_Hit | PropEvent_Interact | PropEvent_TakeDamage | PropEvent_UnGrab;
@@ -3434,8 +3471,10 @@ declare class StaticMesh extends Paintable {
      * Subscribes for an {@link StaticMeshEvent}
      *
      * @return The given function callback itself
+     *
+     * @noSelf
      */
-    public Subscribe(event_name: StaticMeshEvent, callback: EventCallback): EventCallback;
+    public static Subscribe(event_name: StaticMeshEvent, callback: EventCallback): EventCallback;
 
     /**
      * Unsubscribes all callbacks from this Event in this Actor within this Package, optionally passing the function to unsubscribe only that callback
@@ -3443,8 +3482,10 @@ declare class StaticMesh extends Paintable {
      * @param callback Defaults to null
      *
      * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     *
+     * @noSelf
      */
-    public Unsubscribe(event_name: StaticMeshEvent, callback?: EventCallback): void;
+    public static Unsubscribe(event_name: StaticMeshEvent, callback?: EventCallback): void;
 }
 
 type StaticMeshEvent = ActorEvent | StaticMesh_TakeDamage;
@@ -3578,8 +3619,10 @@ declare class Trigger extends Actor {
      * Subscribes for an {@link TriggerEvent}
      *
      * @return The given function callback itself
+     *
+     * @noSelf
      */
-    public Subscribe(event_name: TriggerEvent, callback: EventCallback): EventCallback;
+    public static Subscribe(event_name: TriggerEvent, callback: EventCallback): EventCallback;
 
     /**
      * Unsubscribes all callbacks from this Event in this Actor within this Package, optionally passing the function to unsubscribe only that callback
@@ -3587,8 +3630,10 @@ declare class Trigger extends Actor {
      * @param callback Defaults to null
      *
      * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     *
+     * @noSelf
      */
-    public Unsubscribe(event_name: TriggerEvent, callback?: EventCallback): void;
+    public static Unsubscribe(event_name: TriggerEvent, callback?: EventCallback): void;
 }
 
 type TriggerEvent = ActorEvent | TriggerEvent_BeginOverlap | TriggerEvent_EndOverlap;
@@ -3856,8 +3901,10 @@ declare class Vehicle extends Paintable {
      * Subscribes for an {@link VehicleEvent}
      *
      * @return The given function callback itself
+     *
+     * @noSelf
      */
-    public Subscribe(event_name: VehicleEvent, callback: EventCallback): EventCallback;
+    public static Subscribe(event_name: VehicleEvent, callback: EventCallback): EventCallback;
 
     /**
      * Unsubscribes all callbacks from this Event in this Actor within this Package, optionally passing the function to unsubscribe only that callback
@@ -3865,8 +3912,10 @@ declare class Vehicle extends Paintable {
      * @param callback Defaults to null
      *
      * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     *
+     * @noSelf
      */
-    public Unsubscribe(event_name: VehicleEvent, callback?: EventCallback): void;
+    public static Unsubscribe(event_name: VehicleEvent, callback?: EventCallback): void;
 }
 
 type VehicleEvent = ActorEvent | VehicleEvent_Horn | VehicleEvent_Hit | VehicleEvent_CharacterEntered
@@ -4384,8 +4433,10 @@ declare class Weapon extends Pickable {
      * Subscribes for an {@link WeaponEvent}
      *
      * @return The given function callback itself
+     *
+     * @noSelf
      */
-    public Subscribe(event_name: WeaponEvent, callback: EventCallback): EventCallback;
+    public static Subscribe(event_name: WeaponEvent, callback: EventCallback): EventCallback;
 
     /**
      * Unsubscribes all callbacks from this Event in this Actor within this Package, optionally passing the function to unsubscribe only that callback
@@ -4393,8 +4444,10 @@ declare class Weapon extends Pickable {
      * @param callback Defaults to null
      *
      * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     *
+     * @noSelf
      */
-    public Unsubscribe(event_name: WeaponEvent, callback?: EventCallback): void;
+    public static Unsubscribe(event_name: WeaponEvent, callback?: EventCallback): void;
 }
 
 type WeaponEvent = ActorEvent | WeaponEvent_Fire | WeaponEvent_Reload | WeaponEvent_AmmoClipChanged | WeaponEvent_AmmoBagChanged;
@@ -4523,8 +4576,10 @@ declare class WebUI {
      * Subscribes for an {@link WebUIEvent}
      *
      * @return The given function callback itself
+     *
+     * @noSelf
      */
-    public Subscribe(event_name: WebUIEvent, callback: EventCallback): EventCallback;
+    public static Subscribe(event_name: WebUIEvent, callback: EventCallback): EventCallback;
 
     /**
      * Unsubscribes all callbacks from this Event in this Actor within this Package, optionally passing the function to unsubscribe only that callback
@@ -4532,8 +4587,10 @@ declare class WebUI {
      * @param callback Defaults to null
      *
      * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     *
+     * @noSelf
      */
-    public Unsubscribe(event_name: WebUIEvent, callback?: EventCallback): void;
+    public static Unsubscribe(event_name: WebUIEvent, callback?: EventCallback): void;
 }
 
 type WebUIEvent = string | WebUIEvent_Failed | WebUIEvent_Ready;
