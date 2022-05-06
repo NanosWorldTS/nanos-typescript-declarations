@@ -5078,7 +5078,7 @@ declare class Client {
 
 type EventCallback = (...args: any[]) => void;
 type ClientEvent = string
-    | Chat | ChatEntry | Console | KeyDown | KeyPress | KeyUp | LogEntry | MouseDown | MouseUp
+    | Chat | ChatEntry | ClientEvent_Console | KeyDown | KeyPress | KeyUp | LogEntry | MouseDown | MouseUp
     | MouseEnabled | MouseMoveX | MouseMoveY | OpenChat | CloseChat | OpenConsole | CloseConsole | Tick
     | ViewportResized | WindowFocusChanged | StreamLevelLoaded | StreamLevelUnloaded;
 
@@ -5105,7 +5105,7 @@ type ChatEntry = "ChatEntry";
  *
  * @param text {@link string}
  */
-type Console = "Console";
+type ClientEvent_Console = "Console";
 /**
  * A keyboard key is being pressed
  *
@@ -7190,4 +7190,31 @@ declare enum MouseButtons {
      */
     MouseY = "MouseY",
 }
+//endregion
+
+//region TypeScript Natives
+declare interface Console {
+    assert(condition?: boolean, ...data: any[]): void;
+    clear(): void;
+    count(label?: string): void;
+    countReset(label?: string): void;
+    debug(...data: any[]): void;
+    dir(item?: any, options?: any): void;
+    dirxml(...data: any[]): void;
+    error(...data: any[]): void;
+    group(...data: any[]): void;
+    groupCollapsed(...data: any[]): void;
+    groupEnd(): void;
+    info(...data: any[]): void;
+    log(...data: any[]): void;
+    table(tabularData?: any, properties?: string[]): void;
+    time(label?: string): void;
+    timeEnd(label?: string): void;
+    timeLog(label?: string, ...data: any[]): void;
+    timeStamp(label?: string): void;
+    trace(...data: any[]): void;
+    warn(...data: any[]): void;
+}
+
+declare var console: Console;
 //endregion

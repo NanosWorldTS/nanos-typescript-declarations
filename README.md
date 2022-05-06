@@ -28,6 +28,9 @@ Reference the declaration in your tsconfig.json. Just add the following snippet 
 ]
 ````
 
+### Option 3: (**recommended**)
+Use my nanos world TypeScript template: [here](https://github.com/DasDarki/nanos-typescript-template)
+
 ## Versioning
 The version number for the declarations are built by the following schema:
 - The first number is the documentations number of nanos world but without the dots
