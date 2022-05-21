@@ -122,9 +122,19 @@ declare abstract class Actor {
      * @param is_enabled {@link boolean} Whether the highlight should be enabled
      * @param index {@link number} Index to use (should be 0, 1 or 2). Defaults to 0
      *
-     * @remarks <i>Authority</i>: This can be accessed only on the side which <b><u>spawned</u></b> the actor.
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Client</u></b>.
      */
     public SetHighlightEnabled(is_enabled: boolean, index?: 0 | 1 | 2 | number): void;
+
+    /**
+     * Sets whether the outline is enabled on this Actor, and which outline index to use
+     *
+     * @param is_enabled {@link boolean} Whether the outline should be enabled
+     * @param index {@link number} Index to use (should be 0, 1 or 2). Defaults to 0
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Client</u></b>.
+     */
+    public SetOutlineEnabled(is_enabled: boolean, index?: 0 | 1 | 2 | number): void;
 
     /**
      * Sets the time (in seconds) before this Actor is destroyed. After this time has passed, the actor will be automatically destroyed.
@@ -287,7 +297,7 @@ declare abstract class Actor {
      *
      * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Client</u></b>.
      */
-    public GetBounds(): {Origin: Vector, BoxExtent: Vector, SphereRadius: number};
+    public GetBounds(): { Origin: Vector, BoxExtent: Vector, SphereRadius: number };
 
     /**
      * Gets this Actor's collision type
@@ -364,7 +374,7 @@ declare abstract class Actor {
     /**
      * Returns this Actor's current velocity
      *
-     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Client</u></b>.
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
      */
     public GetVelocity(): Vector;
 
@@ -434,6 +444,7 @@ type ActorEvent_Spawn = "Spawn";
  * @param value {any} The new value
  */
 type ActorEvent_ValueChange = "ValueChange";
+
 //endregion
 
 /**
@@ -571,7 +582,7 @@ declare abstract class Pickable extends Paintable {
     /**
      *
      * @param id Unique ID to assign to the StaticMesh
-     * @param static_mesh_path 	StaticMesh asset to use
+     * @param static_mesh_path    StaticMesh asset to use
      * @param socket Bone socket to attach to. Defaults to ""
      * @param relative_location Relative location. Defaults to Vector(0, 0, 0)
      * @param relative_rotation Relative rotation. Defaults to Rotator(0, 0, 0)
@@ -653,7 +664,7 @@ declare abstract class Pickable extends Paintable {
      *
      * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
      */
-    public GetHandler(): Character|null;
+    public GetHandler(): Character | null;
 
     /**
      * Subscribes for an {@link PickableEvent}
@@ -692,7 +703,7 @@ type PickableEvent_Drop = "Drop";
 /**
  * When this Pickable hits something
  *
- * @param self {@link Pickable}	The Actor that was hit
+ * @param self {@link Pickable}    The Actor that was hit
  * @param impact_force {@link number} The intensity of the hit normalized by the Pickable's weight
  * @param normal_impulse {@link Vector} The impulse direction of the hit
  * @param impact_location {@link Vector}The world space location of the impact
@@ -1433,6 +1444,13 @@ declare class Character extends Paintable {
     public SetFlyingMode(flying_mode: boolean): void;
 
     /**
+     * Sets time elapsed until automatically transition to HighFalling state (from SmallFalling). Default is 1 second
+     *
+     * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
+     */
+    public SetHighFallingTime(time: number): void;
+
+    /**
      * Sets the Field of View multiplier
      *
      * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
@@ -1524,6 +1542,23 @@ declare class Character extends Paintable {
      * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Client</u></b>.
      */
     public GetAllMorphTargetNames(): string[];
+
+    /**
+     * Applies the physical animation settings to the body given
+     *
+     * @param bone The body we will be driving
+     * @param include_self Whether to modify the given body
+     * @param is_local_simulation Whether the drive targets are in world space or local
+     * @param orientation_strength The strength used to correct orientation error. Defaults to 0
+     * @param angular_velocity_strength The strength used to correct angular velocity error. Defaults to 0
+     * @param position_strength The strength used to correct linear position error. Only used for non-local simulation. Defaults to 0
+     * @param velocity_strength The strength used to correct linear velocity error. Only used for non-local simulation. Defaults to 0
+     * @param max_linear_force The max force used to correct linear errors. Defaults to 0
+     * @param max_angular_force The max force used to correct angular errors. Defaults to 0
+     *
+     * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
+     */
+    public SetPhysicalAnimationSettings(bone: string, include_self: boolean, is_local_simulation: boolean, orientation_strength?: number, angular_velocity_strength?: number, position_strength?: number, velocity_strength?: number, max_linear_force?: number, max_angular_force?: number): void;
 
     /**
      * Enables/Disables Character's Movement
@@ -1677,14 +1712,14 @@ declare class Character extends Paintable {
      *
      * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
      */
-    public GetCapsuleSize(): {Radius: number, HalfHeight: number};
+    public GetCapsuleSize(): { Radius: number, HalfHeight: number };
 
     /**
      * Gets the Bone Transform in World Space
      *
      * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Client</u></b>.
      */
-    public GetBoneTransform(bone_name: string): {Location: Vector, Rotation: Rotator};
+    public GetBoneTransform(bone_name: string): { Location: Vector, Rotation: Rotator };
 
     /**
      * Gets the rotation this character is looking at
@@ -1729,7 +1764,7 @@ declare class Character extends Paintable {
      *
      * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
      */
-    public GetGrappedProp(): Prop|null;
+    public GetGrappedProp(): Prop | null;
 
     /**
      * Gets the Gravity Scale of this Character
@@ -1781,14 +1816,14 @@ declare class Character extends Paintable {
      *
      * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
      */
-    public GetPicked(): Pickable|null;
+    public GetPicked(): Pickable | null;
 
     /**
      * Gets the Player controlling this Character
      *
      * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
      */
-    public GetPlayer(): Player|null;
+    public GetPlayer(): Player | null;
 
     /**
      * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
@@ -1820,7 +1855,7 @@ declare class Character extends Paintable {
      *
      * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
      */
-    public GetVehicle(): Vehicle|null;
+    public GetVehicle(): Vehicle | null;
 
     /**
      * Gets Character View Mode
@@ -1857,14 +1892,37 @@ declare class Character extends Paintable {
     public static Unsubscribe(event_name: CharacterEvent, callback?: EventCallback): void;
 }
 
-type CharacterEvent = ActorEvent | CharacterEvent_AnimationBeginNotify | CharacterEvent_AnimationEndNotify
-    | CharacterEvent_Death | CharacterEvent_Drop | CharacterEvent_EnterVehicle | CharacterEvent_AttemptEnterVehicle
-    | CharacterEvent_FallingModeChanged | CharacterEvent_Fire | CharacterEvent_GaitModeChanged
-    | CharacterEvent_GrabProp | CharacterEvent_HealthChanged | CharacterEvent_Highlight | CharacterEvent_Interact
-    | CharacterEvent_LeaveVehicle |CharacterEvent_AttemptLeaveVehicle | CharacterEvent_MoveCompleted | CharacterEvent_PickUp
-    | CharacterEvent_Possessed | CharacterEvent_Punch | CharacterEvent_RagdollModeChanged | CharacterEvent_AttemptReload
-    | CharacterEvent_Reload | CharacterEvent_Respawn | CharacterEvent_StanceModeChanged | CharacterEvent_SwimmingModeChanged
-    | CharacterEvent_TakeDamage | CharacterEvent_UnGrabProp | CharacterEvent_UnPossessed | CharacterEvent_ViewModeChanged
+type CharacterEvent =
+    ActorEvent
+    | CharacterEvent_AnimationBeginNotify
+    | CharacterEvent_AnimationEndNotify
+    | CharacterEvent_Death
+    | CharacterEvent_Drop
+    | CharacterEvent_EnterVehicle
+    | CharacterEvent_AttemptEnterVehicle
+    | CharacterEvent_FallingModeChanged
+    | CharacterEvent_Fire
+    | CharacterEvent_GaitModeChanged
+    | CharacterEvent_GrabProp
+    | CharacterEvent_HealthChanged
+    | CharacterEvent_Highlight
+    | CharacterEvent_Interact
+    | CharacterEvent_LeaveVehicle
+    | CharacterEvent_AttemptLeaveVehicle
+    | CharacterEvent_MoveCompleted
+    | CharacterEvent_PickUp
+    | CharacterEvent_Possessed
+    | CharacterEvent_Punch
+    | CharacterEvent_RagdollModeChanged
+    | CharacterEvent_AttemptReload
+    | CharacterEvent_Reload
+    | CharacterEvent_Respawn
+    | CharacterEvent_StanceModeChanged
+    | CharacterEvent_SwimmingModeChanged
+    | CharacterEvent_TakeDamage
+    | CharacterEvent_UnGrabProp
+    | CharacterEvent_UnPossessed
+    | CharacterEvent_ViewModeChanged
     | CharacterEvent_WeaponAimModeChanged;
 //region Character Events
 /**
@@ -2120,6 +2178,7 @@ type CharacterEvent_ViewModeChanged = "ViewModeChanged";
  * @param new_state {@link AimMode}
  */
 type CharacterEvent_WeaponAimModeChanged = "WeaponAimModeChanged";
+
 //endregion
 
 /**
@@ -2170,7 +2229,7 @@ declare class Database {
      * @param callback Callback to call when finishes. Defaults to null
      * @param parameters Sequence of parameters to escape into the Query
      */
-    public Select(query: string, callback?: (rows: ({[key: string]: any})[]) => void, ...parameters: any[]): void;
+    public Select(query: string, callback?: (rows: ({ [key: string]: any })[]) => void, ...parameters: any[]): void;
 
     /**
      * Selects a query syncronously
@@ -2178,7 +2237,7 @@ declare class Database {
      * @param query Query to select
      * @param parameters Sequence of parameters to escape into the Query
      */
-    public SelectedSync(query: string, ...parameters: any[]): ({[key: string]: any})[];
+    public SelectedSync(query: string, ...parameters: any[]): ({ [key: string]: any })[];
 }
 
 /**
@@ -2489,6 +2548,7 @@ type GrenadeEvent_Explode = "Explode";
  * @param handler {@link Character} The Character which has thrown
  */
 type GrenadeEvent_Throw = "Throw";
+
 //endregion
 
 /**
@@ -2967,7 +3027,7 @@ declare abstract class Player {
      *
      * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
      */
-    public GetControlledCharacter(): Character|null;
+    public GetControlledCharacter(): Character | null;
 
     /**
      * Gets the network ID of this entity (same in both client and server)
@@ -3117,6 +3177,7 @@ type PlayerEvent_UnPossess = "UnPossess";
  * @param is_talking {@link boolean}
  */
 type PlayerEvent_VOIP = "VOIP";
+
 //endregion
 
 /**
@@ -3207,7 +3268,13 @@ declare class Prop extends Paintable {
     public static Unsubscribe(event_name: PropEvent, callback?: EventCallback): void;
 }
 
-type PropEvent = ActorEvent | PropEvent_Grab | PropEvent_Hit | PropEvent_Interact | PropEvent_TakeDamage | PropEvent_UnGrab;
+type PropEvent =
+    ActorEvent
+    | PropEvent_Grab
+    | PropEvent_Hit
+    | PropEvent_Interact
+    | PropEvent_TakeDamage
+    | PropEvent_UnGrab;
 //region Prop Events
 /**
  * Triggered when Character grabs a Prop
@@ -3254,6 +3321,7 @@ type PropEvent_TakeDamage = "TakeDamage";
  * @param character {@link Character} The old Grabber
  */
 type PropEvent_UnGrab = "UnGrab";
+
 //endregion
 
 /**
@@ -3652,6 +3720,7 @@ type TriggerEvent_BeginOverlap = "BeginOverlap";
  * @param entity {@link Actor} Any Actor which left the Trigger
  */
 type TriggerEvent_EndOverlap = "EndOverlap";
+
 //endregion
 
 /**
@@ -3874,7 +3943,7 @@ declare class Vehicle extends Paintable {
      *
      * @remarks <i>Authority</i>: This can be accessed on both <b><u>Client</u></b> and <b><u>Server</u></b>.
      */
-    public GetPassenger(seat: number): Character|null;
+    public GetPassenger(seat: number): Character | null;
 
     /**
      * Gets all passengers
@@ -3931,7 +4000,7 @@ type VehicleEvent_Horn = "Horn";
 /**
  * Triggered when Vehicle hits something
  *
- * @param self {@link Vehicle}	The Actor that was hit
+ * @param self {@link Vehicle}    The Actor that was hit
  * @param impact_force {@link number} The intensity of the hit normalized by the Vehicle's weight
  * @param normal_impulse {@link Vector} The impulse direction of the hit
  * @param impact_location {@link Vector}The world space location of the impact
@@ -3976,6 +4045,7 @@ type VehicleEvent_CharacterAttemptEnter = "CharacterAttemptEnter";
  * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
  */
 type VehicleEvent_CharacterAttemptLeave = "CharacterAttemptLeave";
+
 //endregion
 
 /**
@@ -4034,20 +4104,24 @@ declare class Weapon extends Pickable {
     /**
      * Animation played by the Weapon when Firing
      *
+     * @param play_rate Defaults to 1.
+     *
      * @see <a href="https://docs.nanos.world/docs/core-concepts/assets#referencing-assets-in-scripting">here</a> for more information about the Animation Asset.
      *
      * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
      */
-    public SetAnimationFire(animation_asset_path: string): void;
+    public SetAnimationFire(animation_asset_path: string, play_rate?: number): void;
 
     /**
      * Animation played by the Character when Firing
      *
+     * @param play_rate Defaults to 1.
+     *
      * @see <a href="https://docs.nanos.world/docs/core-concepts/assets#referencing-assets-in-scripting">here</a> for more information about the Animation Asset.
      *
      * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
      */
-    public SetAnimationCharacterFire(animation_asset_path: string): void;
+    public SetAnimationCharacterFire(animation_asset_path: string, play_rate?: number): void;
 
     /**
      * Animation played by the Character when Reloading
@@ -4180,67 +4254,87 @@ declare class Weapon extends Pickable {
     /**
      * Sound when weapon has not bullet and try to shoot
      *
+     * @param volume Defaults to 1.
+     * @param pitch Defaults to 1.
+     *
      * @see <a href="https://docs.nanos.world/docs/scripting-reference/glossary/basic-types#specialpath">here</a> for more information about the Sound Asset.
      *
      * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
      */
-    public SetSoundDry(sound_asset_path: string): void;
+    public SetSoundDry(sound_asset_path: string, volume?: number, pitch?: number): void;
 
     /**
      * Sound when Loading a magazine
      *
+     * @param volume Defaults to 1.
+     * @param pitch Defaults to 1.
+     *
      * @see <a href="https://docs.nanos.world/docs/scripting-reference/glossary/basic-types#specialpath">here</a> for more information about the Sound Asset.
      *
      * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
      */
-    public SetSoundLoad(sound_asset_path: string): void;
+    public SetSoundLoad(sound_asset_path: string, volume?: number, pitch?: number): void;
 
     /**
      * Sound when Unloading a magazine
      *
+     * @param volume Defaults to 1.
+     * @param pitch Defaults to 1.
+     *
      * @see <a href="https://docs.nanos.world/docs/scripting-reference/glossary/basic-types#specialpath">here</a> for more information about the Sound Asset.
      *
      * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
      */
-    public SetSoundUnload(sound_asset_path: string): void;
+    public SetSoundUnload(sound_asset_path: string, volume?: number, pitch?: number): void;
 
     /**
      * Sound when Zooming
      *
+     * @param volume Defaults to 1.
+     * @param pitch Defaults to 1.
+     *
      * @see <a href="https://docs.nanos.world/docs/scripting-reference/glossary/basic-types#specialpath">here</a> for more information about the Sound Asset.
      *
      * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
      */
-    public SetSoundZooming(sound_asset_path: string): void;
+    public SetSoundZooming(sound_asset_path: string, volume?: number, pitch?: number): void;
 
     /**
      * Sound when Aiming
      *
+     * @param volume Defaults to 1.
+     * @param pitch Defaults to 1.
+     *
      * @see <a href="https://docs.nanos.world/docs/scripting-reference/glossary/basic-types#specialpath">here</a> for more information about the Sound Asset.
      *
      * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
      */
-    public SetSoundAim(sound_asset_path: string): void;
+    public SetSoundAim(sound_asset_path: string, volume?: number, pitch?: number): void;
 
     /**
      * Sound when Shooting
      *
+     * @param volume Defaults to 1.
+     * @param pitch Defaults to 1.
+     *
      * @see <a href="https://docs.nanos.world/docs/scripting-reference/glossary/basic-types#specialpath">here</a> for more information about the Sound Asset.
      *
      * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
      */
-    public SetSoundFire(sound_asset_path: string): void;
+    public SetSoundFire(sound_asset_path: string, volume?: number, pitch?: number): void;
 
     /**
      * Sound when firing with only having X remaining bullets in the magazine, useful for last shot 'ping' or sound when low on bullets
      *
      * @param remaining_bullets_count The amount of remaining bullet to start playing this sound. Defaults to 1
+     * @param volume Defaults to 1.
+     * @param pitch Defaults to 1.
      *
      * @see <a href="https://docs.nanos.world/docs/scripting-reference/glossary/basic-types#specialpath">here</a> for more information about the Sound Asset.
      *
      * @remarks <i>Authority</i>: This can be accessed only on the <b><u>Server</u></b>.
      */
-    public SetSoundFireLastBullets(sound_asset_path: string, remaining_bullets_count?: number): void;
+    public SetSoundFireLastBullets(sound_asset_path: string, remaining_bullets_count?: number, volume?: number, pitch?: number): void;
 
     /**
      * Base Weapon's Spread (the higher the less precision - recommended value: 20)
@@ -4450,7 +4544,12 @@ declare class Weapon extends Pickable {
     public static Unsubscribe(event_name: WeaponEvent, callback?: EventCallback): void;
 }
 
-type WeaponEvent = ActorEvent | WeaponEvent_Fire | WeaponEvent_Reload | WeaponEvent_AmmoClipChanged | WeaponEvent_AmmoBagChanged;
+type WeaponEvent =
+    ActorEvent
+    | WeaponEvent_Fire
+    | WeaponEvent_Reload
+    | WeaponEvent_AmmoClipChanged
+    | WeaponEvent_AmmoBagChanged;
 //region Weapon Events
 /**
  * Triggered when Weapon fires (this will be triggered for each shot)
@@ -4483,6 +4582,7 @@ type WeaponEvent_AmmoClipChanged = "AmmoClipChanged";
  * @param new_ammo_bag {@link number}
  */
 type WeaponEvent_AmmoBagChanged = "AmmoBagChanged";
+
 //endregion
 
 /**
@@ -4622,7 +4722,7 @@ declare class Assets {
      *
      * @noSelf
      */
-    public static GetAssetPacks(): ({Name: string, Path: string, Author: string, Version: string})[];
+    public static GetAssetPacks(): ({ Name: string, Path: string, Author: string, Version: string })[];
 
     /**
      * Returns an array of strings containing all Animation Assets Keys from an AssetPack
@@ -4808,7 +4908,7 @@ declare class Client {
      *
      * @noSelf
      */
-    public static DeprojectScreenToWorld(screen_position: Vector2D): {Position: Vector, Direction: Vector};
+    public static DeprojectScreenToWorld(screen_position: Vector2D): { Position: Vector, Direction: Vector };
 
     /**
      * Transforms a 3D world-space vector into 2D screen coordinates
@@ -4911,9 +5011,11 @@ declare class Client {
     /**
      * Changes the Outline Color for interactable stuff. Multiply it by 5 (or more) for having a glowing effect
      *
+     * @remarks The default Outline color index used by the game is 0 (when interacting with stuff).
+     *
      * @noSelf
      */
-    public static SetOutlineColor(color: Color): void;
+    public static SetOutlineColor(color: Color, index?: number): void;
 
     /**
      * Changes the Highlight Color for highlighted actors at a specific Index. Multiply it by 5 (or more) for having a glowing effect
@@ -5000,7 +5102,7 @@ declare class Client {
      *
      * @noSelf
      */
-    public static FindPathToLocation(start_location: Vector, end_location: Vector): ({IsValid: boolean, IsPartial: boolean, Length: number, Cost: number, PathPoints: Vector[]})[];
+    public static FindPathToLocation(start_location: Vector, end_location: Vector): ({ IsValid: boolean, IsPartial: boolean, Length: number, Cost: number, PathPoints: Vector[] })[];
 
     /**
      * Returns the current Map
@@ -5213,6 +5315,7 @@ type ViewportResized = "ViewportResized";
  * @param is_focused {@link boolean}
  */
 type WindowFocusChanged = "WindowFocusChanged";
+
 //endregion
 
 /**
@@ -5340,7 +5443,7 @@ declare class HTTP {
      *
      * @noSelf
      */
-    public static RequestSync(uri: string, endpoint?: string, method?: HttpMethod, data?: string, content_type?: string, compress?: boolean, headers?: any): {Status: number, Data: string};
+    public static RequestSync(uri: string, endpoint?: string, method?: HttpMethod, data?: string, content_type?: string, compress?: boolean, headers?: any): { Status: number, Data: string };
 }
 
 type HttpMethod = string | "GET" | "HEAD" | "POST" | "PUT" | "DELETE" | "CONNECT" | "OPTIONS" | "TRACE" | "PATCH";
@@ -5430,7 +5533,7 @@ declare class Input {
     public static GetGameKeyBindings(): KeyBinding[];
 }
 
-type KeyBinding = {BindingName: string, KeyName: string} & {[key: string]: any};
+type KeyBinding = { BindingName: string, KeyName: string } & { [key: string]: any };
 
 /**
  * Class which represents the Current Package
@@ -5527,7 +5630,7 @@ declare class Package {
      *
      * @noSelf
      */
-    public static GetDirectories(path_filter?: string): string|any[];
+    public static GetDirectories(path_filter?: string): string | any[];
 
     /**
      * Gets a list of all files in this package, optionally with filters
@@ -5537,7 +5640,7 @@ declare class Package {
      *
      * @noSelf
      */
-    public static GetFiles(path_filter?: string, extension_filter?: string): string|any[];
+    public static GetFiles(path_filter?: string, extension_filter?: string): string | any[];
 
     /**
      * Gives the package name
@@ -5565,7 +5668,7 @@ declare class Package {
      *
      * @noSelf
      */
-    public static GetPersistentData(key: string): {[key: string]: any}|any;
+    public static GetPersistentData(key: string): { [key: string]: any } | any;
 }
 
 type PackageEvent = string | Load | Unload;
@@ -5583,6 +5686,7 @@ type Load = "Load";
  * Triggered when this page fails to load
  */
 type Unload = "Unload";
+
 //endregion
 
 /**
@@ -5727,7 +5831,7 @@ declare class Server {
      *
      * @noSelf
      */
-    public static GetMapConfig(): ({[key: string]: any})[];
+    public static GetMapConfig(): ({ [key: string]: any })[];
 
     /**
      * Returns a list of all Maps installed on the server
@@ -5736,7 +5840,7 @@ declare class Server {
      *
      * @noSelf
      */
-    public static GetMaps(only_loaded?: boolean): ({key: string, author: string, compatible_game_modes: any[]})[];
+    public static GetMaps(only_loaded?: boolean): ({ key: string, author: string, compatible_game_modes: any[] })[];
 
     /**
      * Returns a list of Packages folder names available in the server, optionally returns only loaded and running packages
@@ -5856,6 +5960,7 @@ type ServerEvent_Stop = "Stop";
  * @param delta_time {@link number}
  */
 type ServerEvent_Tick = "Tick";
+
 //endregion
 
 /**
@@ -6158,7 +6263,7 @@ declare class World {
     /**
      * @noSelf
      */
-    public static GetTime(): {hours: number, minutes: number};
+    public static GetTime(): { hours: number, minutes: number };
 
     /**
      * @noSelf
@@ -6215,6 +6320,11 @@ declare class Color {
     public A: number;
 
     public constructor(r: number, g: number, b: number, a?: number);
+
+    /**
+     * Gets the Hexadecimal representation of this Color
+     */
+    public ToHEX(): string;
 
     /**
      * Returns a random color from Color Palette
@@ -6478,7 +6588,7 @@ declare class Rotator {
     public Normalize(): void;
 
     /**
-     * 	Returns the vector rotated by the inverse of this rotator
+     *    Returns the vector rotated by the inverse of this rotator
      */
     public UnrotateVector(vector: Vector): Vector;
 
@@ -6717,7 +6827,7 @@ declare enum CollisionType {
      */
     Normal,
     /**
-     * 	Only Blocks Static objects
+     *    Only Blocks Static objects
      */
     StaticOnly,
     /**
@@ -7190,29 +7300,49 @@ declare enum MouseButtons {
      */
     MouseY = "MouseY",
 }
+
 //endregion
 
 //region TypeScript Natives
 declare interface Console {
     assert(condition?: boolean, ...data: any[]): void;
+
     clear(): void;
+
     count(label?: string): void;
+
     countReset(label?: string): void;
+
     debug(...data: any[]): void;
+
     dir(item?: any, options?: any): void;
+
     dirxml(...data: any[]): void;
+
     error(...data: any[]): void;
+
     group(...data: any[]): void;
+
     groupCollapsed(...data: any[]): void;
+
     groupEnd(): void;
+
     info(...data: any[]): void;
+
     log(...data: any[]): void;
+
     table(tabularData?: any, properties?: string[]): void;
+
     time(label?: string): void;
+
     timeEnd(label?: string): void;
+
     timeLog(label?: string, ...data: any[]): void;
+
     timeStamp(label?: string): void;
+
     trace(...data: any[]): void;
+
     warn(...data: any[]): void;
 }
 
