@@ -104,3 +104,6 @@ dist
 .tern-port
 
 .idea/
+
+# Auto generated types file
+index.d.ts
