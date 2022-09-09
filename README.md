@@ -1,4 +1,6 @@
 # TypeScript Declarations for nanos world ![npm](https://img.shields.io/npm/v/nanos-world-types)
+> The declarations are deprecated. Use the [nanosts CLI](https://github.com/NanosWorldTS/nanos-typescript-cli) instead!
+
 TypeScript Declarations for the nanos world API which can be used with [TypeScriptToLua](https://github.com/TypeScriptToLua/TypeScriptToLua).
 
 ## Installation
